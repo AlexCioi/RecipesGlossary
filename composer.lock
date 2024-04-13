@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7274aa2bfbf74ea68d597095d38aaa87",
+    "content-hash": "be46f5bde8026deb18ff9babda8edee2",
     "packages": [
         {
             "name": "composer/semver",
@@ -2001,6 +2001,123 @@
                 "source": "https://github.com/php-fig/log/tree/3.0.0"
             },
             "time": "2021-07-14T16:46:02+00:00"
+        },
+        {
+            "name": "psr/simple-cache",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/simple-cache.git",
+                "reference": "764e0b3939f5ca87cb904f570ef9be2d78a07865"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/simple-cache/zipball/764e0b3939f5ca87cb904f570ef9be2d78a07865",
+                "reference": "764e0b3939f5ca87cb904f570ef9be2d78a07865",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\SimpleCache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interfaces for simple caching",
+            "keywords": [
+                "cache",
+                "caching",
+                "psr",
+                "psr-16",
+                "simple-cache"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/simple-cache/tree/3.0.0"
+            },
+            "time": "2021-10-29T13:26:27+00:00"
+        },
+        {
+            "name": "stefanak-michal/bolt",
+            "version": "v7.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neo4j-php/Bolt.git",
+                "reference": "219999c589fe29faee4a9df61ce2e68ad11334b2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neo4j-php/Bolt/zipball/219999c589fe29faee4a9df61ce2e68ad11334b2",
+                "reference": "219999c589fe29faee4a9df61ce2e68ad11334b2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^8.1",
+                "psr/simple-cache": "^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "suggest": {
+                "ext-openssl": "Needed when using StreamSocket connection class with SSL",
+                "ext-sockets": "Needed when using Socket connection class",
+                "laudis/neo4j-php-client": "Neo4j-PHP-Client is the most advanced PHP Client for Neo4j",
+                "stefanak-michal/neo4j-bolt-wrapper": "Wrapper for Neo4j PHP Bolt library to simplify usage."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Bolt\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michal Stefanak",
+                    "homepage": "https://www.linkedin.com/in/michalstefanak/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP library for communication with Neo4j graph database over TCP socket with Bolt protocol specification",
+            "homepage": "https://github.com/neo4j-php/Bolt",
+            "keywords": [
+                "Socket",
+                "bolt",
+                "database",
+                "neo4j"
+            ],
+            "support": {
+                "docs": "https://www.neo4j.com/docs/bolt/current/",
+                "issues": "https://github.com/neo4j-php/Bolt/issues",
+                "source": "https://github.com/neo4j-php/Bolt"
+            },
+            "funding": [
+                {
+                    "url": "https://ko-fi.com/michalstefanak",
+                    "type": "ko-fi"
+                }
+            ],
+            "time": "2024-04-03T19:50:36+00:00"
         },
         {
             "name": "symfony/asset",
