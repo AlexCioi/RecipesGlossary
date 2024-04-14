@@ -1,41 +1,38 @@
 <template>
     <div class="overflow-auto">
-        <b-pagination
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="my-table"
-        ></b-pagination>
+        <div class="container">
+                <b-table
+                    id="my-table"
+                    :items="items"
+                    :per-page="perPage"
+                    :current-page="currentPage"
+                    small
+                ></b-table>
 
-        <p class="mt-3">Current Page: {{ currentPage }}</p>
+                <div class="mx-auto w-25">
+                    <b-pagination
+                        v-model="currentPage"
+                        :total-rows="rows"
+                        :per-page="perPage"
+                        aria-controls="my-table"
+                    ></b-pagination>
 
-        <b-table
-            id="my-table"
-            :items="items"
-            :per-page="perPage"
-            :current-page="currentPage"
-            small
-        ></b-table>
+                    <p class="mt-3">Current Page: {{ currentPage }}</p>
+                </div>
+        </div>
+
     </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
-            perPage: 3,
+            perPage: 20,
             currentPage: 1,
-            items: [
-                { id: 1, first_name: 'Fred', last_name: 'Flintstone' },
-                { id: 2, first_name: 'Wilma', last_name: 'Flintstone' },
-                { id: 3, first_name: 'Barney', last_name: 'Rubble' },
-                { id: 4, first_name: 'Betty', last_name: 'Rubble' },
-                { id: 5, first_name: 'Pebbles', last_name: 'Flintstone' },
-                { id: 6, first_name: 'Bamm Bamm', last_name: 'Rubble' },
-                { id: 7, first_name: 'The Great', last_name: 'Gazzoo' },
-                { id: 8, first_name: 'Rockhead', last_name: 'Slate' },
-                { id: 9, first_name: 'Pearl', last_name: 'Slaghoople' }
-            ],
+            items: [], //{ id: 1, name: 'Fred'},
         };
     },
     computed: {
@@ -43,5 +40,35 @@ export default {
             return this.items.length;
         },
     },
+    methods: {
+        processRecipesArray(array) {
+            // Use map to iterate over the array and transform each recipe object
+            const computedRecipes = array.map((recipe, index) => {
+                // Extract properties from the recipe object
+                const { name } = recipe.properties;
+
+                // Create a new item object with the extracted properties
+                return { name };
+            });
+
+            // Assign the computedRecipes array to this.items
+            this.items = computedRecipes;
+        },
+        fetchRecipes() {
+            axios
+                .get('/api/recipes')
+                .then((response) => {
+                    //this.items = response.data;
+                    this.processRecipesArray(response.data);
+                    console.log(this.items);
+                })
+                .catch((error) => {
+                    console.log('Error fetching recipes'.error);
+                })
+        }
+    },
+    mounted() {
+        this.fetchRecipes();
+    }
 };
 </script>
