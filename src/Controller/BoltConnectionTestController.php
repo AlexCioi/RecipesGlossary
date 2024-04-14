@@ -25,7 +25,7 @@ class BoltConnectionTestController extends AbstractController
             ->getResponse();
 
         $protocol
-            ->run('MATCH p=()-->() RETURN p LIMIT 25')
+            ->run('MATCH (n:DietType) RETURN n LIMIT 25')
             ->pull();
 
         foreach ($protocol->getResponses() as $response) {

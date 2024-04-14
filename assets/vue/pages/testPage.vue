@@ -1,17 +1,20 @@
 <script>
-import TestComponent from '../components/testComponent.vue';
+import Test from '../components/testComponent.vue';
+import Pagination from '../components/paginationComponent.vue';
 
 export default {
     name: 'TestPage',
     components: {
-        TestComponent,
+        Test,
+        Pagination,
     },
 };
 </script>
 
 <template>
     <div>
-        <TestComponent/>
+        <Pagination/>
+        <Test></Test>
     </div>
 </template>
 
