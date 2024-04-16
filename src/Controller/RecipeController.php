@@ -13,10 +13,11 @@ class RecipeController extends AbstractController
 
     public function fetchRecipes(Request $request, BoltConnection $bolt, SerializerService $serializerService): Response
     {
-        $boltResponse = $bolt->runQuery('MATCH (n:Recipe) RETURN n LIMIT 25');
+        //$boltResponse = $bolt->runQuery('MATCH (n:Recipe) RETURN n LIMIT 25');
+        $boltResponse = $bolt->runQuery('MATCH p=()-[r:WROTE]->() RETURN p LIMIT 50');
 
         $response = $serializerService->boltResponseSerialize($boltResponse);
-        //dd($response);
+        dd($response);
 
         return new Response($response, Response::HTTP_OK);
     }
