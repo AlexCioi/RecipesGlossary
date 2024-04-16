@@ -48,30 +48,19 @@ export default {
             console.log(res);
         },
         processRecipesArray(array) {
-            // {
-            //     +id: 0
-            //     +labels: array:1 [
-            //         0 => "Recipe"
-            //     ]
-            //     +properties: array:6 [
-            //         "preparationTime" => 900
-            //         "name" => "Tomato & mozzarella couscous salad"
-            //         "description" => "Keep some couscous in your cupboard as a stand-by, it's ready in minutes"
-            //         "id" => "101233"
-            //         "skillLevel" => "Easy"
-            //         "cookingTime" => 0
-            //     ]
-            //     +element_id: "4:c9881f6e-7753-462b-a5d2-aded8bdf85c1:0"
-            // }
-
             // Use map to iterate over the array and transform each recipe object
-            const computedRecipes = array.map((recipe, ) => {
+            const computedRecipes = array.map((relation) => {
+                //console.log(relation);
                 // Extract properties from the recipe object
-                const { name } = recipe.properties;
+                const name = relation.nodes[1].properties.name;
+                const author = relation.nodes[0].properties.name;
+                const skill = relation.nodes[1].properties.skillLevel;
 
                 // Create a new item object with the extracted properties
-                return { name };
+                return { name , author, skill };
             });
+
+            console.log(computedRecipes);
 
             // Assign the computedRecipes array to this.items
             this.items = computedRecipes;

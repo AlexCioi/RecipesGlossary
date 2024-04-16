@@ -9,28 +9,15 @@ use Symfony\Component\Serializer\Serializer;
 
 class SerializerService
 {
-    public function boltResponseSerialize(\Iterator $boltResponse): string
+    public function arraySerialize(array $array): string
     {
-        $boltResponseArray = [];
-        foreach ($boltResponse as $responseObject) {
-            array_push($boltResponseArray, $responseObject->content);
-        }
-
-        array_shift($boltResponseArray);
-        array_pop($boltResponseArray);
-
-        $recipesArray = [];
-        foreach($boltResponseArray as $recipeNodeObject) {
-            $recipesArray[] = $recipeNodeObject[0];
-        }
-
         //dd($recipesArray);
 
         $jsonEncoder = [new JsonEncoder()];
         $normalizer = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizer, $jsonEncoder);
 
-        $response = $serializer->serialize($recipesArray, 'json');
+        $response = $serializer->serialize($array, 'json');
 
         return $response;
     }

@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-class BoltConnection
+class BoltService
 {
     public function runQuery(string $query): \Iterator
     {
@@ -25,5 +25,25 @@ class BoltConnection
         $result = $protocol->getResponses();
 
         return $result;
+    }
+
+    public function boltResponseHandler(\Iterator $boltResponse): array
+    {
+        $boltResponseArray = [];
+        foreach ($boltResponse as $responseObject) {
+            array_push($boltResponseArray, $responseObject->content);
+        }
+
+        array_shift($boltResponseArray);
+        array_pop($boltResponseArray);
+
+        $recipesArray = [];
+        foreach($boltResponseArray as $recipeNodeObject) {
+            $recipesArray[] = $recipeNodeObject[0];
+        }
+
+        return $recipesArray;
+
+
     }
 }
