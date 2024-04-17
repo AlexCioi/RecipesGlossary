@@ -27,11 +27,33 @@
                                 </b-input-group>
                             </b-form-group>
                         </b-col>
+                        <b-col lg="6" class="my-1">
+                            <b-form-group
+                                v-model="sortDirection"
+                                label="Filter On"
+                                description="Leave all unchecked to filter on all data"
+                                label-cols-sm="3"
+                                label-align-sm="right"
+                                label-size="sm"
+                                class="mb-0"
+                                v-slot="{ ariaDescribedby }"
+                            >
+                                <b-form-checkbox-group
+                                    v-model="filterOn"
+                                    :aria-describedby="ariaDescribedby"
+                                    class="mt-1"
+                                >
+                                    <b-form-checkbox value="recipe">Recipe</b-form-checkbox>
+                                    <b-form-checkbox value="authorName">Author</b-form-checkbox>
+                                    <b-form-checkbox value="numberOfIngredients">Number of ingredients</b-form-checkbox>
+                                    <b-form-checkbox value="skill">Skill</b-form-checkbox>
+                                </b-form-checkbox-group>
+                            </b-form-group>
+                        </b-col>
                     </b-row>
                 </b-container>
             </template>
             <b-table
-                class=""
                 id="my-table"
                 :busy="isBusy"
                 :fields="fields"
@@ -44,6 +66,10 @@
                 @filtered="onFiltered"
                 :filter="filter"
                 :filter-included-fields="filterOn"
+                stacked="md"
+                v-model:sort-by="sortBy"
+                v-model:sort-desc="sortDesc"
+                sort-icon-left
             >
                 <template #table-busy>
                     <div class="text-center my-2">
@@ -112,8 +138,11 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            sortBy: 'recipe',
+            sortDesc: false,
             filter: null,
             filterOn: [],
+            sortDirection: 'asc',
             isBusy: false,
             perPage: 20,
             currentPage: 1,
@@ -122,11 +151,11 @@ export default {
             recipe: {},
             ingredients: [],
             fields: [
-                'recipe',
-                'authorName',
-                'numberOfIngredients',
-                'skill',
-                'show_details',
+                { key: 'recipe', sortable: false },
+                { key: 'authorName', sortable: false },
+                { key: 'numberOfIngredients', sortable: true },
+                { key: 'skill', sortable: true },
+                { key: 'show_details' },
             ],
         };
     },
@@ -136,6 +165,18 @@ export default {
         },
     },
     methods: {
+        skillSortCompare(a, b) {
+            const skillOrder = ['Easy', 'More effort', 'A challenge']; // Define the order of skill levels
+
+            // Get the index of each skill level in the skillOrder array
+            const indexA = skillOrder.indexOf(a.toLowerCase());
+            const indexB = skillOrder.indexOf(b.toLowerCase());
+
+            // Compare the indexes to determine the sorting order
+            if (indexA < indexB) return -1;
+            if (indexA > indexB) return 1;
+            return 0;
+        },
         toggleBusy() {
             this.isBusy = !this.isBusy;
         },
