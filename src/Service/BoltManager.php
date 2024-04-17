@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-class BoltService
+class BoltManager
 {
     public function runQuery(string $query): \Iterator
     {
@@ -43,7 +43,5 @@ class BoltService
         }
 
         return $recipesArray;
-
-
     }
 }

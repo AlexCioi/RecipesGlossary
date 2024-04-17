@@ -4,12 +4,49 @@
             <b-table
                 class="w-50"
                 id="my-table"
+                :fields="fields"
                 :items="items"
                 :per-page="perPage"
                 :current-page="currentPage"
                 small
                 @row-clicked="toggleRightBar(); changeRightBarContent(arguments[1])"
-            ></b-table>
+            >
+                <template #cell(author)="data">
+                    <a href="/home/" class="btn btn-light px-0 mx-0 w-100"> {{ data.value }} </a>
+                </template>
+
+                <template #cell(show_details)="row">
+                    <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+                        {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
+                    </b-button>
+                </template>
+
+                <template #row-details="row">
+                    <b-card>
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>Cooking time:</b></b-col>
+                            <b-col>{{ row.item.cookingTime }}</b-col>
+                        </b-row>
+
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>Description:</b></b-col>
+                            <b-col>{{ row.item.description }}</b-col>
+                        </b-row>
+
+                        <b-row class="mb-2">
+                            <b-col sm="3" class="text-sm-right"><b>Description:</b></b-col>
+                            <b-col>{{ row.item.preparationTime }}</b-col>
+                        </b-row>
+
+<!--                        <b-row class="mb-2">-->
+<!--                            <b-col sm="3" class="text-sm-right"><b>Description:</b></b-col>-->
+<!--                            <b-col>{{ row.item.description }}</b-col>-->
+<!--                        </b-row>-->
+
+                        <b-button size="sm" @click="row.toggleDetails">Hide Details</b-button>
+                    </b-card>
+                </template>
+            </b-table>
 
             <b-pagination
                 v-model="currentPage"
@@ -20,11 +57,11 @@
 
             <p class="mt-3">Current Page: {{ currentPage }}</p>
         </div>
-
     </div>
 </template>
 
 <script>
+// eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
 
 export default {
@@ -32,7 +69,14 @@ export default {
         return {
             perPage: 20,
             currentPage: 1,
-            items: [], //{ id: 1, name: 'Fred'},
+            items: [],
+            fields: [
+                'name',
+                'author',
+                'numberOfIngredients',
+                'skill',
+                'show_details',
+            ],
         };
     },
     computed: {
@@ -48,33 +92,42 @@ export default {
             console.log(res);
         },
         processRecipesArray(array) {
-            // Use map to iterate over the array and transform each recipe object
-            const computedRecipes = array.map((relation) => {
-                //console.log(relation);
-                // Extract properties from the recipe object
-                const name = relation.nodes[1].properties.name;
-                const author = relation.nodes[0].properties.name;
-                const skill = relation.nodes[1].properties.skillLevel;
+            this.items = array.map((relation) => {
+                console.log(relation);
+                const { nodes } = relation;
 
-                // Create a new item object with the extracted properties
-                return { name , author, skill };
+                const { name: author } = nodes[0].properties;
+
+                const { name, skillLevel: skill } = nodes[1].properties;
+
+                const { ingredients: ingredientsObjectArray } = relation;
+
+                const numberOfIngredients = ingredientsObjectArray.length;
+
+                const { cookingTime, description, preparationTime } = nodes[1].properties;
+                return {
+                    name, author, ingredientsObjectArray, numberOfIngredients, skill, cookingTime, description, preparationTime,
+                };
             });
-
-            console.log(computedRecipes);
-
-            // Assign the computedRecipes array to this.items
-            this.items = computedRecipes;
         },
         fetchRecipes() {
             axios
                 .get('/api/recipes')
                 .then((response) => {
-                    //this.items = response.data;
                     this.processRecipesArray(response.data);
-                    console.log(this.items);
                 })
                 .catch((error) => {
-                    console.log('Error fetching recipes'.error);
+                    console.log(error);
+                });
+        },
+        fetchIngredients(recipeId) {
+            axios
+                .get(`api/ingredients/${recipeId}`)
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.log('Error fetching ingredients for recipeId'.recipeId.error);
                 });
         },
     },

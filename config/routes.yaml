@@ -7,3 +7,7 @@ controllers:
 api_recipes:
     path: /api/recipes
     controller: App\Controller\RecipeController::fetchRecipes
+
+api_ingredients:
+    path: /api/ingredients/{recipeId}
+    controller: App\Controller\IngredientController::fetchIngredients

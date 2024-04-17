@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\BoltService;
+use App\Service\BoltManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class HomeController extends AbstractController
 {
     #[Route('/home', name: 'app_home')]
-    public function index(Request $request, BoltService $boltConnection): Response
+    public function index(Request $request, BoltManager $boltConnection): Response
     {
 
         $boltResponseArray = [];
