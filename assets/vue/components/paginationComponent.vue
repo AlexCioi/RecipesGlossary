@@ -1,6 +1,35 @@
 <template>
     <div class="overflow-auto">
         <div class="container">
+            <template>
+                <b-container fluid>
+                    <b-row>
+                        <b-col lg="6" class="my-1 px-0">
+                            <b-form-group
+                                label="Search"
+                                label-for="filter-input"
+                                label-cols-sm="3"
+                                label-align-sm="right"
+                                label-size="sm"
+                                class="mb-0"
+                            >
+                                <b-input-group size="sm">
+                                    <b-form-input
+                                        id="filter-input"
+                                        v-model="filter"
+                                        type="search"
+                                        placeholder="Type to search"
+                                    ></b-form-input>
+
+                                    <b-input-group-append>
+                                        <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+                                    </b-input-group-append>
+                                </b-input-group>
+                            </b-form-group>
+                        </b-col>
+                    </b-row>
+                </b-container>
+            </template>
             <b-table
                 class=""
                 id="my-table"
@@ -12,6 +41,9 @@
                 bordered="bordered"
                 hover
                 @row-clicked="toggleRightBar(); changeRightBarContent(arguments[1])"
+                @filtered="onFiltered"
+                :filter="filter"
+                :filter-included-fields="filterOn"
             >
                 <template #table-busy>
                     <div class="text-center my-2">
@@ -80,6 +112,8 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            filter: null,
+            filterOn: [],
             isBusy: false,
             perPage: 20,
             currentPage: 1,
@@ -159,6 +193,11 @@ export default {
                 .catch((error) => {
                     console.log('Error fetching ingredients for recipeId'.recipeId.error);
                 });
+        },
+        onFiltered(filteredItems) {
+            // Trigger pagination to update the number of buttons/pages due to filtering
+            this.totalRows = filteredItems.length;
+            this.currentPage = 1;
         },
     },
     mounted() {
