@@ -37,11 +37,6 @@ class BoltManager
         array_shift($boltResponseArray);
         array_pop($boltResponseArray);
 
-        $recipesArray = [];
-        foreach($boltResponseArray as $recipeNodeObject) {
-            $recipesArray[] = $recipeNodeObject[0];
-        }
-
-        return $recipesArray;
+        return $boltResponseArray;
     }
 }

@@ -2,46 +2,59 @@
     <div class="overflow-auto">
         <div class="container">
             <b-table
-                class="w-50"
+                class=""
                 id="my-table"
+                :busy="isBusy"
                 :fields="fields"
                 :items="items"
                 :per-page="perPage"
                 :current-page="currentPage"
-                small
+                bordered="bordered"
+                hover
                 @row-clicked="toggleRightBar(); changeRightBarContent(arguments[1])"
             >
-                <template #cell(author)="data">
-                    <a href="/home/" class="btn btn-light px-0 mx-0 w-100"> {{ data.value }} </a>
+                <template #table-busy>
+                    <div class="text-center my-2">
+                        <b-spinner class="align-middle"></b-spinner>
+                        <strong>Loading...</strong>
+                    </div>
+                </template>
+
+                <template #cell(authorName)="data">
+                    <a href="/home/" class="btn btn-light w-100"> {{ data.value }} </a>
                 </template>
 
                 <template #cell(show_details)="row">
-                    <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+                    <b-button size="sm" @click="row.toggleDetails" class="mr-2 w-100">
                         {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
                     </b-button>
                 </template>
 
                 <template #row-details="row">
                     <b-card>
-                        <b-row class="mb-2">
+                        <b-row class="mb-3">
                             <b-col sm="3" class="text-sm-right"><b>Cooking time:</b></b-col>
                             <b-col>{{ row.item.cookingTime }}</b-col>
                         </b-row>
 
-                        <b-row class="mb-2">
+                        <b-row class="mb-3">
                             <b-col sm="3" class="text-sm-right"><b>Description:</b></b-col>
                             <b-col>{{ row.item.description }}</b-col>
                         </b-row>
 
-                        <b-row class="mb-2">
+                        <b-row class="mb-3">
                             <b-col sm="3" class="text-sm-right"><b>Description:</b></b-col>
                             <b-col>{{ row.item.preparationTime }}</b-col>
                         </b-row>
 
-<!--                        <b-row class="mb-2">-->
-<!--                            <b-col sm="3" class="text-sm-right"><b>Description:</b></b-col>-->
-<!--                            <b-col>{{ row.item.description }}</b-col>-->
-<!--                        </b-row>-->
+                        <b-row class="mb-3">
+                            <b-col sm="3" class="text-sm-right"><b>Ingredients:</b></b-col>
+                            <b-col>
+                                <ul>
+                                    <li v-for="ingredient in row.item.ingredientList" :key="ingredient.id">{{ ingredient.name }}</li>
+                                </ul>
+                            </b-col>
+                        </b-row>
 
                         <b-button size="sm" @click="row.toggleDetails">Hide Details</b-button>
                     </b-card>
@@ -67,12 +80,16 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            isBusy: false,
             perPage: 20,
             currentPage: 1,
             items: [],
+            author: {},
+            recipe: {},
+            ingredients: [],
             fields: [
-                'name',
-                'author',
+                'recipe',
+                'authorName',
                 'numberOfIngredients',
                 'skill',
                 'show_details',
@@ -85,36 +102,49 @@ export default {
         },
     },
     methods: {
+        toggleBusy() {
+            this.isBusy = !this.isBusy;
+        },
         toggleRightBar() {
             console.log('hello asdf');
         },
         changeRightBarContent(res) {
             console.log(res);
         },
-        processRecipesArray(array) {
-            this.items = array.map((relation) => {
-                console.log(relation);
-                const { nodes } = relation;
+        processDataArray(array) {
+            this.items = array.map((node) => {
+                const {
+                    name: recipe, cookingTime, description, preparationTime, skillLevel: skill,
+                } = node[1].properties;
 
-                const { name: author } = nodes[0].properties;
+                const { id: authorId } = node[0];
 
-                const { name, skillLevel: skill } = nodes[1].properties;
+                const { name: authorName } = node[0].properties;
 
-                const { ingredients: ingredientsObjectArray } = relation;
+                const numberOfIngredients = node[2].length;
 
-                const numberOfIngredients = ingredientsObjectArray.length;
+                const ingredientList = node[2].map((ingredient) => {
+                    const { name } = ingredient.properties;
 
-                const { cookingTime, description, preparationTime } = nodes[1].properties;
+                    const { id } = ingredient;
+
+                    return { name, id };
+                });
+
                 return {
-                    name, author, ingredientsObjectArray, numberOfIngredients, skill, cookingTime, description, preparationTime,
+                    recipe, cookingTime, description, preparationTime, skill, authorName, authorId, numberOfIngredients, ingredientList,
                 };
             });
+
+            console.log(this.items);
         },
         fetchRecipes() {
+            this.toggleBusy();
             axios
                 .get('/api/recipes')
                 .then((response) => {
-                    this.processRecipesArray(response.data);
+                    this.processDataArray(response.data);
+                    this.toggleBusy();
                 })
                 .catch((error) => {
                     console.log(error);
@@ -136,3 +166,9 @@ export default {
     },
 };
 </script>
+
+<style>
+table.b-table[aria-busy='true'] {
+    opacity: 0.6;
+}
+</style>

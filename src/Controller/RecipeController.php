@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Recipe;
 use App\Service\BoltManager;
 use App\Service\RecipeManager;
 use App\Service\SerializerService;
@@ -15,21 +14,14 @@ class RecipeController extends AbstractController
 
     public function fetchRecipes(Request $request, BoltManager $bolt, SerializerService $serializerService, RecipeManager $recipeManager): Response
     {
-        $boltRecipesResponse = $bolt->runQuery('MATCH p=()-[r:WROTE]->() RETURN p LIMIT 2');
+        $boltRecipesResponse = $bolt->runQuery('MATCH (a:Author)-[:WROTE]->(r:Recipe)-[:CONTAINS_INGREDIENT]->(i:Ingredient) RETURN a, r,
+        COLLECT(i) AS ingredients LIMIT 10');
 
-        $recipesArray = $bolt->boltResponseHandler($boltRecipesResponse);
-        $recipeObjectArray = [];
-        foreach ($recipesArray as $recipe) {
+        $nodeArray = $bolt->boltResponseHandler($boltRecipesResponse);
 
-            $recipeId = $recipeManager->getRecipeId($recipe);
-            $boltIngredientsResponse = $bolt->runQuery('MATCH (r:Recipe {id: "'.$recipeId.'"})-[:CONTAINS_INGREDIENT]->(i:Ingredient) RETURN i');
-            $ingredientsArray = $bolt->boltResponseHandler($boltIngredientsResponse);
+        //dd($recipesArray);
 
-            $newRecipeObject = $recipeManager->createRecipeObject($recipe, $ingredientsArray);
-            $recipeObjectArray[] = $newRecipeObject;
-        }
-
-        $response = $serializerService->arraySerialize($recipeObjectArray);
+        $response = $serializerService->arraySerialize($nodeArray);
 
         return new Response($response, Response::HTTP_OK);
     }
