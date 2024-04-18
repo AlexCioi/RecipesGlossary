@@ -190,16 +190,6 @@ export default {
                     console.log(error);
                 });
         },
-        fetchIngredients(recipeId) {
-            axios
-                .get(`api/ingredients/${recipeId}`)
-                .then((response) => {
-                    console.log(response.data);
-                })
-                .catch((error) => {
-                    console.log('Error fetching ingredients for recipeId'.recipeId.error);
-                });
-        },
         onFiltered(filteredItems) {
             // Trigger pagination to update the number of buttons/pages due to filtering
             this.totalRows = filteredItems.length;

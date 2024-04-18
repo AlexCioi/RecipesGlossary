@@ -39,4 +39,15 @@ class BoltManager
 
         return $boltResponseArray;
     }
+
+    public function getNumberOfRecipes(): int
+    {
+        $recipesNumberResponse = $this->runQuery('
+            MATCH (r:Recipe) RETURN COUNT(r)
+        ');
+
+        $numberArray = $this->boltResponseHandler($recipesNumberResponse);
+
+        return $numberArray[0][0];
+    }
 }

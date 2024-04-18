@@ -4,10 +4,18 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+app_homepage:
+    path: /home/{pageNumber}
+    controller: App\Controller\HomeController::index
+
 api_recipes:
-    path: /api/recipes
+    path: /api/recipes/
     controller: App\Controller\RecipeController::fetchRecipes
 
 api_ingredients:
     path: /api/ingredients/{recipeId}
     controller: App\Controller\IngredientController::fetchIngredients
+
+api_pages_number:
+    path: /api/recipes/numberOfPages
+    controller: App\Controller\RecipeController::fetchNumberOfPages
