@@ -13,7 +13,7 @@ class RecipeController extends AbstractController
     public function fetchRecipes(Request $request, BoltManager $bolt, SerializerService $serializerService): Response
     {
         $boltRecipesResponse = $bolt->runQuery(
-            'MATCH (a:Author)-[:WROTE]->(r:Recipe)-[:CONTAINS_INGREDIENT]->(i:Ingredient) RETURN a, r, COLLECT(i) AS ingredients'
+            'MATCH (a:Author)-[:WROTE]->(r:Recipe)-[:CONTAINS_INGREDIENT]->(i:Ingredient) RETURN a, r, COLLECT(i) AS ingredients LIMIT 100'
         );
 
         $nodeArray = $bolt->boltResponseHandler($boltRecipesResponse);
