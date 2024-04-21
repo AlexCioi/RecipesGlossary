@@ -96,14 +96,17 @@
                 </template>
             </b-table>
 
-            <b-pagination
-                v-model="currentPage"
-                :total-rows="rows"
-                :per-page="perPage"
-                aria-controls="my-table"
-            ></b-pagination>
-
-            <p class="mt-3">Current Page: {{ currentPage }}</p>
+            <template>
+                <div class="overflow-auto">
+                    <b-pagination-nav
+                        :link-gen="linkGen"
+                        :number-of-pages="582"
+                        use-router
+                        @input="fetchPageData"
+                    >
+                    </b-pagination-nav>
+                </div>
+            </template>
         </div>
     </div>
 </template>
@@ -142,14 +145,11 @@ export default {
         },
     },
     methods: {
+        linkGen(pageNum) {
+            return `/home/${pageNum}`;
+        },
         toggleBusy() {
             this.isBusy = !this.isBusy;
-        },
-        toggleRightBar() {
-            console.log('hello asdf');
-        },
-        changeRightBarContent(res) {
-            console.log(res);
         },
         processDataArray(array) {
             this.items = array.map((node) => {
@@ -178,17 +178,17 @@ export default {
 
             console.log(this.items);
         },
-        fetchRecipes() {
-            this.toggleBusy();
-            axios
-                .get('/api/recipes')
-                .then((response) => {
-                    this.processDataArray(response.data);
-                    this.toggleBusy();
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+        fetchPageData(pageNumber) {
+            if (pageNumber) {
+                axios
+                    .get(`/api/recipes/${pageNumber}`)
+                    .then((response) => {
+                        this.processDataArray(response.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
         },
         onFiltered(filteredItems) {
             // Trigger pagination to update the number of buttons/pages due to filtering

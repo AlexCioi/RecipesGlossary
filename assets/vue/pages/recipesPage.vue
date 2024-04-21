@@ -22,9 +22,9 @@ export default {
 </script>
 
 <template>
-    <div>
+    <div class="container-fluid">
 <!--        <pagination/>-->
-        <pagination2/>
+        <pagination2 class="mx-auto"/>
     </div>
 </template>
 

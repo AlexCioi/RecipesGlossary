@@ -5,17 +5,17 @@ controllers:
     type: attribute
 
 app_homepage:
-    path: /home/{pageNumber}
+    path: /home
     controller: App\Controller\HomeController::index
 
 api_recipes:
-    path: /api/recipes/
-    controller: App\Controller\RecipeController::fetchRecipes
+    path: /api/recipes
+    controller: App\Controller\RecipeController::fetchAllRecipes
 
 api_ingredients:
-    path: /api/ingredients/{recipeId}
-    controller: App\Controller\IngredientController::fetchIngredients
+    path: /api/ingredients
+    controller: App\Controller\IngredientController::fetchAllIngredients
 
 api_pages_number:
-    path: /api/recipes/numberOfPages
+    path: /api/pagination/numberOfPages
     controller: App\Controller\RecipeController::fetchNumberOfPages

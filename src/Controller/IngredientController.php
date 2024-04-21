@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IngredientController extends AbstractController
 {
-    public function fetchIngredients(int $recipeId, Request $request, BoltManager $bolt, SerializerService $service): Response
+    public function fetchAllIngredients(Request $request, BoltManager $bolt, SerializerService $service): Response
     {
-        $boltResponse = $bolt->runQuery('MATCH (r:Recipe {id: "'.$recipeId.'"})-[:CONTAINS_INGREDIENT]->(i:Ingredient) RETURN i');
+        $boltResponse = $bolt->runQuery('MATCH (n:Ingredient) RETURN n');
 
         $ingredientsArray = $bolt->boltResponseHandler($boltResponse);
         $response = $service->arraySerialize($ingredientsArray);
