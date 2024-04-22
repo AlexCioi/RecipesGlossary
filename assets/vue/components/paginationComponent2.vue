@@ -13,7 +13,7 @@
                             :id=ingredient.id
                             :value=ingredient.name
                             v-model="checkedIngredients"
-                            @change="fetchNameSearchResults">
+                            @change="fetchPageData(currentPage)">
                         <label :for=ingredient.id> {{ ingredient.name }} </label>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                            v-on:input="nameSearchHandle"
                     >
                 </div>
-                <table class="table table-hover table-bordered">
+                <table class="table table-hover table-bordered" id="table">
                     <thead class="table-light">
                         <tr>
                             <th scope="col">Name</th>
@@ -49,7 +49,7 @@
                             :key="item.id"
                         >
                             <td class="col-6">
-                                <a class="btn w-100 text-start" data-bs-toggle="collapse" :href="'#' + item.recipeId" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                <a class="btn w-100 text-start border border-0" data-bs-toggle="collapse" :href="'#' + item.recipeId" role="button" aria-expanded="false" aria-controls="collapseExample">
                                     {{ item.recipe }}
                                 </a>
                                 <div class="collapse" :id="item.recipeId">
@@ -113,16 +113,20 @@
 <!--                </b-button>-->
 
                 <template>
-                    <div class="overflow-auto">
-                        <b-pagination-nav
-                            :link-gen="linkGen"
-                            use-router
-                            :number-of-pages="numberOfPages"
+                    <div class="overflow-auto mt-1">
+                        <b-pagination
+                            v-model="currentPage"
+                            :total-rows="numberOfRecipes"
+                            :per-page="20"
+                            aria-controls="table"
                             @input="fetchPageData"
                         >
-                        </b-pagination-nav>
+                        </b-pagination>
                     </div>
                 </template>
+                <div @click="funct">
+                    aaaa
+                </div>
             </div>
         </div>
     </div>
@@ -136,66 +140,57 @@ export default {
     name: 'paginationComponent2',
     data() {
         return {
-            queryName: '',
-            checkedIngredients: [''],
-            ingredients: null,
+            queryName: null,
+            checkedIngredients: [],
             isBusy: 1,
-            items: [],
+            isLoadingIngredients: 0,
             currentPage: 1,
-            numberOfPages: null,
+            ingredients: null,
+            items: [],
+            numberOfRecipes: 0,
         };
     },
     methods: {
+        funct() {
+            console.log(this.currentPage);
+        },
         toggleBusy() {
             this.isBusy = !this.isBusy;
         },
-        linkGen(pageNum) {
-            return pageNum === 1 ? '?' : `?page=${pageNum}`;
+        toggleIngredientsLoading() {
+            this.isLoadingIngredients = !this.isLoadingIngredients;
         },
         nameSearchHandle() {
-            if (this.queryName.length >= 3) {
-                this.fetchNameSearchResults(this.queryName);
-            }
+            clearTimeout(this.searchTimeout);
+
+            this.searchTimeout = setTimeout(() => {
+                if (this.queryName.length >= 3 || this.queryName === '') {
+                    this.fetchPageData(this.currentPage);
+                }
+            }, 500);
         },
-        fetchNameSearchResults() {
+        fetchPageData() {
             axios
                 .get('/api/recipes', {
                     params: {
-                        pageNumber: 1,
+                        pageNumber: this.currentPage,
                         name: this.queryName,
                         ingredients: this.checkedIngredients,
                     },
                 })
                 .then((response) => {
                     this.processDataArray(response.data);
-                    // this.toggleBusy();
+                    this.toggleBusy();
                 })
                 .catch((error) => {
                     console.log(error);
                 });
-        },
-        fetchPageData(page) {
-            if (page) {
-                axios
-                    .get('/api/recipes', {
-                        params: {
-                            pageNumber: page,
-                            name: this.queryName,
-                            ingredients: this.checkedIngredients,
-                        },
-                    })
-                    .then((response) => {
-                        this.processDataArray(response.data);
-                        this.fetchIngredients();
-                        this.toggleBusy();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-            }
+
+            this.fetchNumberOfPages();
         },
         processDataArray(array) {
             this.items = array.map((node) => {
+                //console.log(node);
                 const {
                     name: recipe, cookingTime, description, preparationTime, skillLevel: skill,
                 } = node[1].properties;
@@ -216,35 +211,22 @@ export default {
                     return { name, id };
                 });
 
-                const collectionList = node[3].map((ingredient) => {
-                    const { name } = ingredient.properties;
-
-                    const { id } = ingredient;
-
-                    return { name, id };
-                });
-
-                const dietTypeList = node[2].map((ingredient) => {
-                    const { name } = ingredient.properties;
-
-                    const { id } = ingredient;
-
-                    return { name, id };
-                });
-
-                const keywordList = node[2].map((ingredient) => {
-                    const { name } = ingredient.properties;
-
-                    const { id } = ingredient;
-
-                    return { name, id };
-                });
-
                 return {
-                    recipeId, recipe, cookingTime, description, preparationTime, skill, authorName, authorId, numberOfIngredients,
-                    ingredientList, collectionList, dietTypeList, keywordList,
+                    recipeId, recipe, cookingTime, description, preparationTime, skill, authorName, authorId, numberOfIngredients, ingredientList,
                 };
             });
+        },
+        fetchIngredients() {
+            this.toggleIngredientsLoading();
+            axios
+                .get('/api/ingredients')
+                .then((response) => {
+                    this.processIngredientData(response.data);
+                    this.toggleIngredientsLoading();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         },
         processIngredientData(array) {
             this.ingredients = array.map((ingredientNode) => {
@@ -257,19 +239,16 @@ export default {
         },
         fetchNumberOfPages() {
             axios
-                .get('/api/pagination/numberOfPages')
-                .then((response) => {
-                    this.numberOfPages = response.data;
+                .get('/api/pagination', {
+                    params: {
+                        pageNumber: this.currentPage,
+                        name: this.queryName,
+                        ingredients: this.checkedIngredients,
+                    },
                 })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        fetchIngredients() {
-            axios
-                .get('/api/ingredients')
                 .then((response) => {
-                    this.processIngredientData(response.data);
+                    console.log(response.data);
+                    this.numberOfRecipes = response.data.numberOfRecipes;
                 })
                 .catch((error) => {
                     console.log(error);
@@ -277,7 +256,8 @@ export default {
         },
     },
     mounted() {
-        this.fetchNumberOfPages();
+        this.fetchPageData();
+        this.fetchIngredients();
     },
 };
 </script>

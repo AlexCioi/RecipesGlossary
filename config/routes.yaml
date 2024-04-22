@@ -17,5 +17,5 @@ api_ingredients:
     controller: App\Controller\IngredientController::fetchAllIngredients
 
 api_pages_number:
-    path: /api/pagination/numberOfPages
+    path: /api/pagination
     controller: App\Controller\RecipeController::fetchNumberOfPages
