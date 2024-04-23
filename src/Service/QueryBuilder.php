@@ -4,7 +4,7 @@ namespace App\Service;
 
 class QueryBuilder
 {
-    private function buildBaseQuery(int $pageNumber, ?string $name, ?array $ingredients): string
+    private function buildBaseQuery(?string $name, ?array $ingredients): string
     {
         $recipeQuery = '
             MATCH (a:Author)-[:WROTE]->(r:Recipe)
@@ -13,13 +13,14 @@ class QueryBuilder
 
         $ingredientsFilterString = json_encode($ingredients);
 
-        $ingredientFilterQuery = 'i.name IN'.$ingredientsFilterString;
+        $ingredientFilterQuery = '
+        a, r, COLLECT(DISTINCT i) as all_ingredients WHERE ANY (i IN all_ingredients WHERE i.name IN'.$ingredientsFilterString.')';
 
         $nameQuery = 'toLower(r.name) CONTAINS toLower("'.$name.'")';
 
         $query = $recipeQuery;
         if ($ingredients) {
-            $query .= ' WHERE ';
+            $query .= ' WITH ';
             $query .= $ingredientFilterQuery;
         }
 
@@ -41,20 +42,23 @@ class QueryBuilder
         $skip = ($pageNumber - 1) * 20;
         $limit = 20;
 
-        $query = $this->buildBaseQuery($pageNumber, $name, $ingredients);
+        $orderSkipLimitQuery = ' ORDER BY r.name ASC SKIP ' . $skip . ' LIMIT ' . $limit;
 
-        $returnQuery = '
-            RETURN a, r, COLLECT(DISTINCT i) as ingredients ORDER BY r.name ASC SKIP '. $skip .' LIMIT '. $limit .' 
-        ';
-
+        $query = $this->buildBaseQuery($name, $ingredients);
+        if (!$ingredients) {
+            $returnQuery = '
+                RETURN a, r, COLLECT(DISTINCT i) as ingredients'.$orderSkipLimitQuery;
+        } else {
+            $returnQuery = 'RETURN a, r, all_ingredients'.$orderSkipLimitQuery;
+        }
         $query .= $returnQuery;
 
         return $query;
     }
 
-    public function returnCountQuery(int $pageNumber, ?string $name, ?array $ingredients): string
+    public function returnCountQuery(?string $name, ?array $ingredients): string
     {
-        $query = $this->buildBaseQuery($pageNumber, $name, $ingredients);
+        $query = $this->buildBaseQuery($name, $ingredients);
 
         $resultQuery = '
             RETURN COUNT(DISTINCT r) as count

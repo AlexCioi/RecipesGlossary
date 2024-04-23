@@ -165,7 +165,8 @@ export default {
 
             this.searchTimeout = setTimeout(() => {
                 if (this.queryName.length >= 3 || this.queryName === '') {
-                    this.fetchPageData(this.currentPage);
+                    this.currentPage = 1;
+                    this.fetchPageData();
                 }
             }, 500);
         },
@@ -241,7 +242,6 @@ export default {
             axios
                 .get('/api/pagination', {
                     params: {
-                        pageNumber: this.currentPage,
                         name: this.queryName,
                         ingredients: this.checkedIngredients,
                     },

@@ -30,10 +30,10 @@ class RecipeController extends AbstractController
     }
 
     public function fetchNumberOfPages(
-        #[MapQueryParameter] int $pageNumber, #[MapQueryParameter] ?string $name, #[MapQueryParameter] ?array $ingredients,
+        #[MapQueryParameter] ?string $name, #[MapQueryParameter] ?array $ingredients,
         BoltManager $bolt, SerializerService $serializer, QueryBuilder $builder): Response
     {
-        $query = $builder->returnCountQuery($pageNumber, $name, $ingredients);
+        $query = $builder->returnCountQuery($name, $ingredients);
         $boltResponse = $bolt->runQuery($query);
 
         $nodeArray = $bolt->boltResponseHandler($boltResponse);
