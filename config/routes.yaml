@@ -19,3 +19,7 @@ api_ingredients:
 api_pages_number:
     path: /api/pagination
     controller: App\Controller\RecipeController::fetchNumberOfPages
+
+api_author_recipes:
+    path: /api/author/recipes
+    controller: App\Controller\RecipeController::fetchAuthorRecipes

@@ -122,7 +122,39 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="col-3"> {{ item.authorName }} </td>
+                            <td class="col-3" @click="fetchAuthorRecipes(item.authorName)"
+                                data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop"
+                            >
+                                <div class="ms-2 my-2">
+                                    {{ item.authorName }}
+                                </div>
+                                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ item.authorName }}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul>
+                                                    <li v-for="recipe in authorRecipes"
+                                                        :key="recipe"
+                                                        class="my-2"
+                                                    >
+                                                        {{recipe}}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary">Understood</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
                             <td class="col-2"> {{ item.numberOfIngredients }} </td>
                             <td class="col-1"> {{ item.skill }} </td>
                         </tr>
@@ -169,12 +201,10 @@ export default {
             ingredients: null,
             items: [],
             numberOfRecipes: 0,
+            authorRecipes: [],
         };
     },
     methods: {
-        asdf(item) {
-            console.log(item);
-        },
         toggleBusy() {
             this.isBusy = !this.isBusy;
         },
@@ -270,6 +300,22 @@ export default {
                 .then((response) => {
                     console.log(response.data);
                     this.numberOfRecipes = response.data.numberOfRecipes;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        fetchAuthorRecipes(name) {
+            this.authorRecipes = [];
+            axios
+                .get('/api/author/recipes', {
+                    params: {
+                        authorName: name,
+                    },
+                })
+                .then((response) => {
+                    console.log(response.data);
+                    this.authorRecipes = response.data;
                 })
                 .catch((error) => {
                     console.log(error);
