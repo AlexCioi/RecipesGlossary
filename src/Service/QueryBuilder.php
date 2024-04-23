@@ -4,7 +4,7 @@ namespace App\Service;
 
 class QueryBuilder
 {
-    private function buildBaseQuery(?string $name, ?array $ingredients): string
+    private function buildRecipeBaseQuery(?string $name, ?array $ingredients): string
     {
         $recipeQuery = '
             MATCH (a:Author)-[:WROTE]->(r:Recipe)
@@ -37,14 +37,14 @@ class QueryBuilder
         return $query;
     }
 
-    public function returnResultQuery(int $pageNumber, ?string $name, ?array $ingredients): string
+    public function returnRecipeResultQuery(int $pageNumber, ?string $name, ?array $ingredients): string
     {
         $skip = ($pageNumber - 1) * 20;
         $limit = 20;
 
         $orderSkipLimitQuery = ' ORDER BY r.name ASC SKIP ' . $skip . ' LIMIT ' . $limit;
 
-        $query = $this->buildBaseQuery($name, $ingredients);
+        $query = $this->buildRecipeBaseQuery($name, $ingredients);
         if (!$ingredients) {
             $returnQuery = '
                 RETURN a, r, COLLECT(DISTINCT i) as ingredients'.$orderSkipLimitQuery;
@@ -56,9 +56,9 @@ class QueryBuilder
         return $query;
     }
 
-    public function returnCountQuery(?string $name, ?array $ingredients): string
+    public function returnRecipeCountQuery(?string $name, ?array $ingredients): string
     {
-        $query = $this->buildBaseQuery($name, $ingredients);
+        $query = $this->buildRecipeBaseQuery($name, $ingredients);
 
         $resultQuery = '
             RETURN COUNT(DISTINCT r) as count

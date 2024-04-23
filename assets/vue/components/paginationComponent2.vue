@@ -4,7 +4,7 @@
             <div class="col-2">
                 <div class="container-fluid d-flex flex-wrap">
                     <div
-                        class="mx-2 w-50"
+                        class="mx-2"
                         v-for="ingredient in ingredients"
                         :key="ingredient.id"
                     >
@@ -48,53 +48,75 @@
                             v-for="item in items"
                             :key="item.id"
                         >
-                            <td class="col-6">
-                                <a class="btn w-100 text-start border border-0" data-bs-toggle="collapse" :href="'#' + item.recipeId" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            <td class="col-6"  data-bs-toggle="modal" :data-bs-target="'#modal-'+item.recipeId">
+                                <div class="my-2 ms-2">
                                     {{ item.recipe }}
-                                </a>
-                                <div class="collapse" :id="item.recipeId">
-                                    <div class="card card-body">
-                                        <div class="container">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <p class="fw-bold"> Description: </p>
-                                                </div>
-                                                <div class="col-8">
-                                                    {{ item.description }}
+                                </div>
+                                <div class="modal fade" :id="'modal-'+item.recipeId" data-bs-target="static" data-bs-keyboard="false" tabindex="-1" :aria-labelledby="'staticBackdropLabel'+item.recipeId" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" :id="'staticBackdropLabel'+item.recipeId"> {{ item.recipe }} </h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="card card-body">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div :class="modalDetailLabel">
+                                                                <p class="fw-bold"> Written by: </p>
+                                                            </div>
+                                                            <div class="col-8">
+                                                                <p class="light"> {{ item.authorName }} </p>
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div :class="modalDetailLabel">
+                                                                <p class="fw-bold"> Description: </p>
+                                                            </div>
+                                                            <div :class="modalDetailContent">
+                                                                {{ item.description }}
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div :class="modalDetailLabel">
+                                                                <p class="fw-bold"> Cooking time: </p>
+                                                            </div>
+                                                            <div :class="modalDetailContent">
+                                                                {{ item.cookingTime / 60 }} minutes
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div :class="modalDetailLabel">
+                                                                <p class="fw-bold"> Preparation time: </p>
+                                                            </div>
+                                                            <div :class="modalDetailContent">
+                                                                {{ item.preparationTime / 60 }} minutes
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div :class="modalDetailLabel">
+                                                                <p class="fw-bold"> Ingredients: </p>
+                                                            </div>
+                                                            <div :class="modalDetailContent">
+                                                                <ul>
+                                                                    <li
+                                                                        v-for="ingredient in item.ingredientList"
+                                                                        :key="ingredient.id"
+                                                                    > {{ ingredient.name }}
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <p class="fw-bold"> Cooking time: </p>
-                                                </div>
-                                                <div class="col-8">
-                                                    {{ item.cookingTime / 60 }} minutes
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <p class="fw-bold"> Preparation time: </p>
-                                                </div>
-                                                <div class="col-8">
-                                                    {{ item.preparationTime / 60 }} minutes
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <p class="fw-bold"> Ingredients: </p>
-                                                </div>
-                                                <div class="col-8">
-                                                    <ul>
-                                                        <li
-                                                            v-for="ingredient in item.ingredientList"
-                                                            :key="ingredient.id"
-                                                        > {{ ingredient.name }}
-                                                        </li>
-                                                    </ul>
-                                                </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             </div>
                                         </div>
                                     </div>
@@ -124,9 +146,6 @@
                         </b-pagination>
                     </div>
                 </template>
-                <div @click="funct">
-                    aaaa
-                </div>
             </div>
         </div>
     </div>
@@ -140,6 +159,8 @@ export default {
     name: 'paginationComponent2',
     data() {
         return {
+            modalDetailLabel: 'col-4',
+            modalDetailContent: 'col-8',
             queryName: null,
             checkedIngredients: [],
             isBusy: 1,
@@ -151,8 +172,8 @@ export default {
         };
     },
     methods: {
-        funct() {
-            console.log(this.currentPage);
+        asdf(item) {
+            console.log(item);
         },
         toggleBusy() {
             this.isBusy = !this.isBusy;

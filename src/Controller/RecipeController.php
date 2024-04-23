@@ -18,7 +18,7 @@ class RecipeController extends AbstractController
         Request $request, BoltManager $bolt, SerializerService $serializerService, QueryBuilder $builder): Response
     {
 
-        $query = $builder->returnResultQuery($pageNumber, $name, $ingredients);
+        $query = $builder->returnRecipeResultQuery($pageNumber, $name, $ingredients);
         $boltRecipesResponse = $bolt->runQuery($query);
 
         $nodeArray = $bolt->boltResponseHandler($boltRecipesResponse);
@@ -33,7 +33,7 @@ class RecipeController extends AbstractController
         #[MapQueryParameter] ?string $name, #[MapQueryParameter] ?array $ingredients,
         BoltManager $bolt, SerializerService $serializer, QueryBuilder $builder): Response
     {
-        $query = $builder->returnCountQuery($name, $ingredients);
+        $query = $builder->returnRecipeCountQuery($name, $ingredients);
         $boltResponse = $bolt->runQuery($query);
 
         $nodeArray = $bolt->boltResponseHandler($boltResponse);
