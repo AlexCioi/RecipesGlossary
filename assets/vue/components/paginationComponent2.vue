@@ -48,12 +48,16 @@
                             v-for="item in items"
                             :key="item.id"
                         >
-                            <td class="col-6"  data-bs-toggle="modal" :data-bs-target="'#modal-'+item.recipeId">
+                            <td class="col-6"
+                                data-bs-toggle="modal"
+                                :data-bs-target="'#modal-'+item.recipeId"
+                                @click="fetchRecipeDetails(item.recipeId)"
+                            >
                                 <div class="my-2 ms-2">
                                     {{ item.recipe }}
                                 </div>
                                 <div class="modal fade" :id="'modal-'+item.recipeId" data-bs-target="static" data-bs-keyboard="false" tabindex="-1" :aria-labelledby="'staticBackdropLabel'+item.recipeId" aria-hidden="true">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h1 class="modal-title fs-5" :id="'staticBackdropLabel'+item.recipeId"> {{ item.recipe }} </h1>
@@ -105,11 +109,71 @@
                                                             <div :class="modalDetailContent">
                                                                 <ul>
                                                                     <li
+                                                                        class="list-group-item my-1"
                                                                         v-for="ingredient in item.ingredientList"
                                                                         :key="ingredient.id"
-                                                                    > {{ ingredient.name }}
+                                                                    >
+                                                                        <button type="button"
+                                                                                class="btn btn-light"
+                                                                                disabled>
+                                                                            {{ ingredient.name }}
+                                                                        </button>
                                                                     </li>
                                                                 </ul>
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div :class="modalDetailLabel">
+                                                                <p class="fw-bold"> Collections: </p>
+                                                            </div>
+                                                            <div :class="modalDetailContent">
+                                                                <div class="d-flex flex-wrap">
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-light mx-1 my-1"
+                                                                            disabled
+                                                                            v-for="collection in recipeDetails[0]"
+                                                                            :key="collection"
+                                                                    >
+                                                                        {{ collection }}
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div :class="modalDetailLabel">
+                                                                <p class="fw-bold"> Keywords: </p>
+                                                            </div>
+                                                            <div :class="modalDetailContent">
+                                                                <div class="d-flex flex-wrap">
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-light mx-1 my-1 text-black"
+                                                                            disabled
+                                                                            v-for="collection in recipeDetails[2]"
+                                                                            :key="collection"
+                                                                    >
+                                                                        {{ collection }}
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div :class="modalDetailLabel">
+                                                                <p class="fw-bold"> Diet Types: </p>
+                                                            </div>
+                                                            <div :class="modalDetailContent">
+                                                                <div class="d-flex flex-wrap">
+                                                                    <button type="button"
+                                                                            class="btn btn-sm btn-light mx-1 my-1"
+                                                                            disabled
+                                                                            v-for="collection in recipeDetails[1]"
+                                                                            :key="collection"
+                                                                    >
+                                                                        {{ collection }}
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -148,7 +212,6 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary">Understood</button>
                                             </div>
                                         </div>
                                     </div>
@@ -202,6 +265,7 @@ export default {
             items: [],
             numberOfRecipes: 0,
             authorRecipes: [],
+            recipeDetails: [],
         };
     },
     methods: {
@@ -249,7 +313,7 @@ export default {
 
                 const { id: authorId } = node[0];
 
-                const { id: recipeId } = node[1];
+                const { id: recipeId } = node[1].properties;
 
                 const { name: authorName } = node[0].properties;
 
@@ -298,7 +362,6 @@ export default {
                     },
                 })
                 .then((response) => {
-                    console.log(response.data);
                     this.numberOfRecipes = response.data.numberOfRecipes;
                 })
                 .catch((error) => {
@@ -314,8 +377,23 @@ export default {
                     },
                 })
                 .then((response) => {
-                    console.log(response.data);
                     this.authorRecipes = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        fetchRecipeDetails(id) {
+            this.recipeDetails = [];
+            axios
+                .get('/api/recipe/details', {
+                    params: {
+                        recipeId: id,
+                    },
+                })
+                .then((response) => {
+                    this.recipeDetails = response.data;
+                    console.log(this.recipeDetails);
                 })
                 .catch((error) => {
                     console.log(error);

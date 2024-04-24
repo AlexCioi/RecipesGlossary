@@ -15,7 +15,7 @@ class RecipeController extends AbstractController
 {
     public function fetchAllRecipes(
         #[MapQueryParameter] int $pageNumber, #[MapQueryParameter] ?string $name, #[MapQueryParameter] ?array $ingredients,
-        Request $request, BoltManager $bolt, SerializerService $serializerService, QueryBuilder $builder): Response
+        BoltManager $bolt, SerializerService $serializerService, QueryBuilder $builder): Response
     {
 
         $query = $builder->returnRecipeResultQuery($pageNumber, $name, $ingredients);
@@ -46,14 +46,25 @@ class RecipeController extends AbstractController
         return new Response($response, Response::HTTP_OK);
     }
 
-    public function fetchAuthorRecipes(#[MapQueryParameter] string $authorName, Request $request, SerializerService $serializer, BoltManager $bolt): Response
+    public function fetchAuthorRecipes(#[MapQueryParameter] string $authorName, SerializerService $serializer, BoltManager $bolt, QueryBuilder $builder): Response
     {
-        $query = 'MATCH (a:Author {name: "'.$authorName.'"})-[:WROTE]->(r:Recipe) RETURN COLLECT(DISTINCT r.name)';
+        $query = $builder->returnAuthorRecipesQuery($authorName);
         $boltResponse = $bolt->runQuery($query);
 
         $nodeArray = $bolt->boltResponseHandler($boltResponse);
 
         $response = $serializer->arraySerialize($nodeArray[0][0]);
+        return new Response($response, Response::HTTP_OK);
+    }
+
+    public function fetchRecipeDetails(#[MapQueryParameter] string $recipeId, BoltManager $bolt, SerializerService $serializer, QueryBuilder $builder): Response
+    {
+        $query = $builder->returnRecipeDetailsQuery($recipeId);
+        $boltResponse = $bolt->runQuery($query);
+
+        $nodeArray = $bolt->boltResponseHandler($boltResponse);
+        dump($query);
+        $response = $serializer->arraySerialize($nodeArray[0]);
         return new Response($response, Response::HTTP_OK);
     }
 

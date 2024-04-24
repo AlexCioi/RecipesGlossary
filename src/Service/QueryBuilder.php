@@ -67,4 +67,24 @@ class QueryBuilder
         $query .= $resultQuery;
         return $query;
     }
+
+    public function returnAuthorRecipesQuery(string $authorName): string
+    {
+        $query = 'MATCH (a:Author {name: "'.$authorName.'"})-[:WROTE]->(r:Recipe) RETURN COLLECT(DISTINCT r.name)';
+
+        return $query;
+    }
+
+    public function returnRecipeDetailsQuery(string $recipeId): string
+    {
+        $query = '
+            MATCH (r:Recipe {id: "'.$recipeId.'"})
+            OPTIONAL MATCH (r)-[:COLLECTION]->(c:Collection)
+            OPTIONAL MATCH (r)-[:DIET_TYPE]->(d:DietType)
+            OPTIONAL MATCH (r)-[:KEYWORD]->(k:Keyword)
+            RETURN COLLECT(DISTINCT c.name), COLLECT(DISTINCT d.name), COLLECT(DISTINCT k.name)
+        ';
+
+        return $query;
+    }
 }

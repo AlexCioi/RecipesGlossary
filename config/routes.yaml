@@ -23,3 +23,7 @@ api_pages_number:
 api_author_recipes:
     path: /api/author/recipes
     controller: App\Controller\RecipeController::fetchAuthorRecipes
+
+api_recipe_details:
+    path: /api/recipe/details
+    controller: App\Controller\RecipeController::fetchRecipeDetails
