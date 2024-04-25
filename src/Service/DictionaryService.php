@@ -14,6 +14,13 @@ class DictionaryService
 
         $this->criterionDictionary[0] = ' r.name ';
         $this->criterionDictionary[1] = ' numberOfIngredients ';
+        $this->criterionDictionary[2] = ' 
+            CASE r.skillLevel
+                WHEN "Easy" THEN 1
+                WHEN "More effort" THEN 2
+                WHEN "A challenge" THEN 3
+            END
+        ';
     }
 
     public function getOrder(bool $code)

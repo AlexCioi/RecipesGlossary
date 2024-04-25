@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid mt-5">
         <div class="row">
-            <div class="col-3">
+            <div class="col-2">
                 <div class="container-fluid d-flex flex-wrap">
                     <div
                         class="mx-2"
@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-9">
+            <div class="col-10">
                 <div class="input-group w-50 mb-2">
                     <span class="input-group-text" id="search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -27,7 +27,7 @@
                     </span>
                     <input type="text"
                            class="form-control"
-                           placeholder="find a recipe..."
+                           placeholder="Find a recipe..."
                            aria-label="Username"
                            aria-describedby="search"
                            v-model="queryName"
@@ -37,40 +37,58 @@
                 <table class="table table-hover table-bordered" id="table">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col" @click="orderByName" class="d-flex align-content-end">
-                                <div class="me-1">
-                                    Name
-                                </div>
-                                <div v-if="criterion === 0">
-                                    <svg v-if="direction === 0" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-alpha-up" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z"/>
-                                        <path d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z"/>
-                                    </svg>
-                                    <svg v-if="direction === 1" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-alpha-down-alt" viewBox="0 0 16 16">
-                                        <path d="M12.96 7H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645z"/>
-                                        <path fill-rule="evenodd" d="M10.082 12.629 9.664 14H8.598l1.789-5.332h1.234L13.402 14h-1.12l-.419-1.371zm1.57-.785L11 9.688h-.047l-.652 2.156z"/>
-                                        <path d="M4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"/>
-                                    </svg>
+                            <th scope="col" @click="orderByName">
+                                <div class="d-flex">
+                                    <div class="me-1">
+                                        Name
+                                    </div>
+                                    <div v-if="criterion === 0">
+                                        <svg v-if="direction === 0" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-alpha-up" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z"/>
+                                            <path d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z"/>
+                                        </svg>
+                                        <svg v-if="direction === 1" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-alpha-down-alt" viewBox="0 0 16 16">
+                                            <path d="M12.96 7H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645z"/>
+                                            <path fill-rule="evenodd" d="M10.082 12.629 9.664 14H8.598l1.789-5.332h1.234L13.402 14h-1.12l-.419-1.371zm1.57-.785L11 9.688h-.047l-.652 2.156z"/>
+                                            <path d="M4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"/>
+                                        </svg>
+                                    </div>
                                 </div>
                             </th>
                             <th scope="col">Author</th>
-                            <th scope="col" @click="orderByIngredients" class="d-flex align-content-end">
-                                <div class="me-1">
-                                    Ing. count
-                                </div>
-                                <div v-if="criterion === 1">
-                                    <svg v-if="direction === 0" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-numeric-up" viewBox="0 0 16 16">
-                                        <path d="M12.438 1.668V7H11.39V2.684h-.051l-1.211.859v-.969l1.262-.906h1.046z"/>
-                                        <path fill-rule="evenodd" d="M11.36 14.098c-1.137 0-1.708-.657-1.762-1.278h1.004c.058.223.343.45.773.45.824 0 1.164-.829 1.133-1.856h-.059c-.148.39-.57.742-1.261.742-.91 0-1.72-.613-1.72-1.758 0-1.148.848-1.835 1.973-1.835 1.09 0 2.063.636 2.063 2.687 0 1.867-.723 2.848-2.145 2.848zm.062-2.735c.504 0 .933-.336.933-.972 0-.633-.398-1.008-.94-1.008-.52 0-.927.375-.927 1 0 .64.418.98.934.98"/>
-                                        <path d="M4.5 13.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z"/>
-                                    </svg>
-                                    <svg v-if="direction === 1" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-numeric-down-alt" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M11.36 7.098c-1.137 0-1.708-.657-1.762-1.278h1.004c.058.223.343.45.773.45.824 0 1.164-.829 1.133-1.856h-.059c-.148.39-.57.742-1.261.742-.91 0-1.72-.613-1.72-1.758 0-1.148.848-1.836 1.973-1.836 1.09 0 2.063.637 2.063 2.688 0 1.867-.723 2.848-2.145 2.848zm.062-2.735c.504 0 .933-.336.933-.972 0-.633-.398-1.008-.94-1.008-.52 0-.927.375-.927 1 0 .64.418.98.934.98"/>
-                                        <path d="M12.438 8.668V14H11.39V9.684h-.051l-1.211.859v-.969l1.262-.906h1.046zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"/>
-                                    </svg>
+                            <th scope="col" @click="orderByIngredients">
+                                <div class="d-flex">
+                                    <div class="me-1">
+                                        Ing. count
+                                    </div>
+                                    <div v-if="criterion === 1">
+                                        <svg v-if="direction === 0" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-numeric-up" viewBox="0 0 16 16">
+                                            <path d="M12.438 1.668V7H11.39V2.684h-.051l-1.211.859v-.969l1.262-.906h1.046z"/>
+                                            <path fill-rule="evenodd" d="M11.36 14.098c-1.137 0-1.708-.657-1.762-1.278h1.004c.058.223.343.45.773.45.824 0 1.164-.829 1.133-1.856h-.059c-.148.39-.57.742-1.261.742-.91 0-1.72-.613-1.72-1.758 0-1.148.848-1.835 1.973-1.835 1.09 0 2.063.636 2.063 2.687 0 1.867-.723 2.848-2.145 2.848zm.062-2.735c.504 0 .933-.336.933-.972 0-.633-.398-1.008-.94-1.008-.52 0-.927.375-.927 1 0 .64.418.98.934.98"/>
+                                            <path d="M4.5 13.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z"/>
+                                        </svg>
+                                        <svg v-if="direction === 1" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-numeric-down-alt" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M11.36 7.098c-1.137 0-1.708-.657-1.762-1.278h1.004c.058.223.343.45.773.45.824 0 1.164-.829 1.133-1.856h-.059c-.148.39-.57.742-1.261.742-.91 0-1.72-.613-1.72-1.758 0-1.148.848-1.836 1.973-1.836 1.09 0 2.063.637 2.063 2.688 0 1.867-.723 2.848-2.145 2.848zm.062-2.735c.504 0 .933-.336.933-.972 0-.633-.398-1.008-.94-1.008-.52 0-.927.375-.927 1 0 .64.418.98.934.98"/>
+                                            <path d="M12.438 8.668V14H11.39V9.684h-.051l-1.211.859v-.969l1.262-.906h1.046zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"/>
+                                        </svg>
+                                    </div>
                                 </div>
                             </th>
-                            <th scope="col">Skill</th>
+                            <th scope="col" @click="orderBySkill">
+                                <div class="d-flex">
+                                    <div class="me-1">
+                                        Skill
+                                    </div>
+                                    <div v-if="criterion === 2">
+                                        <svg v-if="direction === 0" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-up-alt" viewBox="0 0 16 16">
+                                            <path d="M3.5 13.5a.5.5 0 0 1-1 0V4.707L1.354 5.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L3.5 4.707zm4-9.5a.5.5 0 0 1 0-1h1a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h3a.5.5 0 0 1 0 1zm0 3a.5.5 0 0 1 0-1h5a.5.5 0 0 1 0 1zM7 12.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5"/>
+                                        </svg>
+                                        <svg v-if="direction === 1" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-sort-down" viewBox="0 0 16 16">
+                                            <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -78,7 +96,7 @@
                             v-for="item in items"
                             :key="item.id"
                         >
-                            <td class="col-6"
+                            <td class="col-5"
                                 data-bs-toggle="modal"
                                 :data-bs-target="'#modal-'+item.recipeId"
                                 @click="fetchRecipeDetails(item.recipeId)"
@@ -249,7 +267,7 @@
 
                             </td>
                             <td class="col-2"> {{ item.numberOfIngredients }} </td>
-                            <td class="col-1"> {{ item.skill }} </td>
+                            <td class="col-2"> {{ item.skill }} </td>
                         </tr>
                     </tbody>
                 </table>
@@ -307,6 +325,15 @@ export default {
         toggleIngredientsLoading() {
             this.isLoadingIngredients = !this.isLoadingIngredients;
         },
+        orderByName() {
+            if (this.criterion === 0) {
+                this.switchDirection();
+            } else {
+                this.toggleNameCriterion();
+            }
+
+            this.fetchPageData();
+        },
         orderByIngredients() {
             if (this.criterion === 1) {
                 this.switchDirection();
@@ -316,11 +343,11 @@ export default {
 
             this.fetchPageData();
         },
-        orderByName() {
-            if (this.criterion === 0) {
+        orderBySkill() {
+            if (this.criterion === 2) {
                 this.switchDirection();
             } else {
-                this.criterion = 0;
+                this.toggleSkillCriterion();
             }
 
             this.fetchPageData();
@@ -328,8 +355,14 @@ export default {
         switchDirection() {
             this.direction = this.direction === 0 ? 1 : 0;
         },
+        toggleNameCriterion() {
+            this.criterion = 0;
+        },
         toggleIngredientCriterion() {
             this.criterion = 1;
+        },
+        toggleSkillCriterion() {
+            this.criterion = 2;
         },
         nameSearchHandle() {
             clearTimeout(this.searchTimeout);
