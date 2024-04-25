@@ -11,7 +11,7 @@
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">{{ingredient.name}}</div>
                     </div>
-                    <span class="badge text-bg-primary rounded-pill">{{ingredient.usages}}</span>
+                    <span class="badge text-bg-primary rounded-pill">{{ingredient.usages}} usages </span>
                 </li>
             </ol>
         </div>
@@ -26,7 +26,7 @@
                     <div class="ms-2 me-auto">
                         <div class="fw-bold"> {{ author.name }} </div>
                     </div>
-                    <span class="badge text-bg-primary rounded-pill"> {{ author.recipeCount }} </span>
+                    <span class="badge text-bg-primary rounded-pill"> {{ author.recipeCount }} recipes </span>
                 </li>
             </ol>
         </div>
