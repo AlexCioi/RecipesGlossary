@@ -4,6 +4,13 @@ namespace App\Service;
 
 class QueryBuilder
 {
+    private DictionaryService $dictionary;
+
+    public function __construct(DictionaryService $dictionary)
+    {
+        $this->dictionary = $dictionary;
+    }
+
     private function buildRecipeBaseQuery(?string $name, ?array $ingredients): string
     {
         $recipeQuery = '
@@ -37,19 +44,35 @@ class QueryBuilder
         return $query;
     }
 
-    public function returnRecipeResultQuery(int $pageNumber, ?string $name, ?array $ingredients): string
+    public function returnRecipeResultQuery(
+        int $pageNumber, ?string $name, ?array $ingredients, bool $orderDirection, int $criterion): string
     {
         $skip = ($pageNumber - 1) * 20;
         $limit = 20;
 
-        $orderSkipLimitQuery = ' ORDER BY r.name ASC SKIP ' . $skip . ' LIMIT ' . $limit;
+        $orderQuery = ' ORDER BY ';
+        $skipLimitQuery = ' SKIP ' . $skip . ' LIMIT ' . $limit;
+
+        $orderSkipLimitQuery =
+            $orderQuery.
+            $this->dictionary->getCriterion($criterion).
+            $this->dictionary->getOrder($orderDirection).
+            $skipLimitQuery;
+
+//        if ($criterion == 'ingredients') {
+//            $orderSkipLimitQuery = ' ORDER BY numberOfIngredients' . $orderDirection . ' SKIP ' . $skip . ' LIMIT ' . $limit;
+//        }
+//
+//        if ($criterion == 'name') {
+//            $orderSkipLimitQuery = ' ORDER BY r.name ASC SKIP ' . $skip . ' LIMIT ' . $limit;
+//        }
 
         $query = $this->buildRecipeBaseQuery($name, $ingredients);
         if (!$ingredients) {
             $returnQuery = '
-                RETURN a, r, COLLECT(DISTINCT i) as ingredients'.$orderSkipLimitQuery;
+                RETURN a, r, COLLECT(DISTINCT i), size(COLLECT(DISTINCT i)) as numberOfIngredients' . $orderSkipLimitQuery;
         } else {
-            $returnQuery = 'RETURN a, r, all_ingredients'.$orderSkipLimitQuery;
+            $returnQuery = 'RETURN a, r, all_ingredients, SIZE(all_ingredients) as numberOfIngredients' . $orderSkipLimitQuery;
         }
         $query .= $returnQuery;
 
