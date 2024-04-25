@@ -59,14 +59,6 @@ class QueryBuilder
             $this->dictionary->getOrder($orderDirection).
             $skipLimitQuery;
 
-//        if ($criterion == 'ingredients') {
-//            $orderSkipLimitQuery = ' ORDER BY numberOfIngredients' . $orderDirection . ' SKIP ' . $skip . ' LIMIT ' . $limit;
-//        }
-//
-//        if ($criterion == 'name') {
-//            $orderSkipLimitQuery = ' ORDER BY r.name ASC SKIP ' . $skip . ' LIMIT ' . $limit;
-//        }
-
         $query = $this->buildRecipeBaseQuery($name, $ingredients);
         if (!$ingredients) {
             $returnQuery = '
@@ -106,6 +98,42 @@ class QueryBuilder
             OPTIONAL MATCH (r)-[:DIET_TYPE]->(d:DietType)
             OPTIONAL MATCH (r)-[:KEYWORD]->(k:Keyword)
             RETURN COLLECT(DISTINCT c.name), COLLECT(DISTINCT d.name), COLLECT(DISTINCT k.name)
+        ';
+
+        return $query;
+    }
+
+    public function returnTopIngredients(): string
+    {
+        $query = '
+            MATCH (i:Ingredient)<-[:CONTAINS_INGREDIENT]-(:Recipe)
+            RETURN i.name AS ingredient, COUNT(*) AS usageCount
+            ORDER BY usageCount DESC
+            LIMIT 5;
+        ';
+
+        return $query;
+    }
+
+    public function returnProlificAuthors(): string
+    {
+        $query = '
+            MATCH (a:Author)-[:WROTE]->(r:Recipe)
+            RETURN a.name, COUNT(r) AS recipeCount
+            ORDER BY recipeCount DESC
+            LIMIT 5;
+        ';
+
+        return $query;
+    }
+
+    public function returnComplexRecipes(): string
+    {
+        $query = '
+            MATCH (r:Recipe)
+            RETURN r.name AS recipe, (r.preparationTime + r.cookingTime) / 60 AS complexity
+            ORDER BY complexity DESC
+            LIMIT 5
         ';
 
         return $query;

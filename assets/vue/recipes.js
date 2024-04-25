@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import App from './pages/recipesPage';
+import App from './pages/appPage.vue';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 
 // Import Bootstrap and BootstrapVue CSS files (order is important)

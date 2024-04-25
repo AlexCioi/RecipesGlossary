@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col-9">
                 <div class="input-group w-50 mb-2">
                     <span class="input-group-text" id="search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -281,7 +281,7 @@ import axios from 'axios';
 import tab from 'bootstrap/js/src/tab';
 
 export default {
-    name: 'paginationComponent2',
+    name: 'TableComponent',
     data() {
         return {
             modalDetailLabel: 'col-4',

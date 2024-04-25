@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\BoltManager;
+use App\Service\QueryBuilder;
 use App\Service\SerializerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,18 @@ class IngredientController extends AbstractController
         $response = $service->arraySerialize($ingredientsArray);
 
         //dd($ingredientsArray);
+
+        return new Response($response, Response::HTTP_OK);
+    }
+
+    public function fetchTopIngredients(BoltManager $bolt, SerializerService $service, QueryBuilder $builder): Response
+    {
+        $query = $builder->returnTopIngredients();
+
+        $boltResponse = $bolt->runQuery($query);
+        $nodeArray = $bolt->boltResponseHandler($boltResponse);
+
+        $response = $service->arraySerialize($nodeArray);
 
         return new Response($response, Response::HTTP_OK);
     }

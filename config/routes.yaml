@@ -27,3 +27,15 @@ api_author_recipes:
 api_recipe_details:
     path: /api/recipe/details
     controller: App\Controller\RecipeController::fetchRecipeDetails
+
+api_ingredients_common:
+    path: /api/ingredients/common
+    controller: App\Controller\IngredientController::fetchTopIngredients
+
+api_authors_prolific:
+    path: /api/authors/prolific
+    controller: App\Controller\AuthorController::fetchProlificAuthors
+
+api_recipes_complex:
+    path: /api/recipes/complex
+    controller: App\Controller\RecipeController::fetchComplexRecipes

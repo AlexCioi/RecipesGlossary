@@ -18,10 +18,10 @@ class RecipeController extends AbstractController
     {
 
         $query = $builder->returnRecipeResultQuery($pageNumber, $name, $ingredients, $direction, $criterion);
-        $boltRecipesResponse = $bolt->runQuery($query);
 
+        $boltRecipesResponse = $bolt->runQuery($query);
         $nodeArray = $bolt->boltResponseHandler($boltRecipesResponse);
-        dump($query);
+
         $response = $serializerService->arraySerialize($nodeArray);
 
         return new Response($response, Response::HTTP_OK);
@@ -30,22 +30,24 @@ class RecipeController extends AbstractController
     public function fetchAuthorRecipes(#[MapQueryParameter] string $authorName, SerializerService $serializer, BoltManager $bolt, QueryBuilder $builder): Response
     {
         $query = $builder->returnAuthorRecipesQuery($authorName);
-        $boltResponse = $bolt->runQuery($query);
 
+        $boltResponse = $bolt->runQuery($query);
         $nodeArray = $bolt->boltResponseHandler($boltResponse);
 
         $response = $serializer->arraySerialize($nodeArray[0][0]);
+
         return new Response($response, Response::HTTP_OK);
     }
 
     public function fetchRecipeDetails(#[MapQueryParameter] string $recipeId, BoltManager $bolt, SerializerService $serializer, QueryBuilder $builder): Response
     {
         $query = $builder->returnRecipeDetailsQuery($recipeId);
-        $boltResponse = $bolt->runQuery($query);
 
+        $boltResponse = $bolt->runQuery($query);
         $nodeArray = $bolt->boltResponseHandler($boltResponse);
-        dump($query);
+
         $response = $serializer->arraySerialize($nodeArray[0]);
+
         return new Response($response, Response::HTTP_OK);
     }
 
@@ -54,14 +56,27 @@ class RecipeController extends AbstractController
         BoltManager $bolt, SerializerService $serializer, QueryBuilder $builder): Response
     {
         $query = $builder->returnRecipeCountQuery($name, $ingredients);
-        $boltResponse = $bolt->runQuery($query);
 
+        $boltResponse = $bolt->runQuery($query);
         $nodeArray = $bolt->boltResponseHandler($boltResponse);
+
         $responseArray = array(
             "numberOfRecipes" => $nodeArray[0][0],
         );
 
         $response = $serializer->arraySerialize($responseArray);
+
+        return new Response($response, Response::HTTP_OK);
+    }
+
+    public function fetchComplexRecipes(BoltManager $bolt, SerializerService $service, QueryBuilder $builder): Response
+    {
+        $query = $builder->returnComplexRecipes();
+
+        $boltResponse = $bolt->runQuery($query);
+        $nodeArray = $bolt->boltResponseHandler($boltResponse);
+
+        $response = $service->arraySerialize($nodeArray);
 
         return new Response($response, Response::HTTP_OK);
     }
