@@ -1,12 +1,10 @@
 <script>
 import recipesTable from '../components/recipesTable.vue';
-import leaderboard from '../components/leaderboardComponent.vue';
 
 export default {
     name: 'AppPage',
     components: {
         recipesTable,
-        leaderboard,
     },
     data() {
         return {
@@ -23,15 +21,7 @@ export default {
 
 <template>
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-10">
-                <recipesTable/>
-            </div>
-            <div class="col-2">
-                <leaderboard/>
-            </div>
-        </div>
-
+        <recipesTable/>
     </div>
 </template>
 
