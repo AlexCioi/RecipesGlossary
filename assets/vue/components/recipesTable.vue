@@ -226,19 +226,19 @@
                                                                     </ul>
                                                                 </div>
                                                                 <div class="col-2">
-                                                                    <p class="fw-bold"> Most similar recipes: </p>
+                                                                    <p class="fw-bold"> Close matches: </p>
                                                                 </div>
                                                                 <div class="col-4">
                                                                     <ol class="list-group list-group-numbered">
                                                                         <li
-                                                                            class="list-group-item d-flex justify-content-between align-items-start"
+                                                                            class="list-group-item d-flex justify-content-between align-items-center"
                                                                             v-for="recipe in recipeDetails[3]"
                                                                             :key="recipe[0].properties.id"
                                                                         >
                                                                             <div class="ms-2 me-auto">
-                                                                                <div class="fw-bold"> {{ recipe[0].properties.name }} </div>
-                                                                                Similarity: {{ recipe[1] }}%
+                                                                                <div class="fw-medium"> {{ recipe[0].properties.name }} </div>
                                                                             </div>
+                                                                            <span class="badge text-bg-primary rounded-pill">{{ recipe[1] }}%</span>
                                                                         </li>
                                                                     </ol>
                                                                 </div>
