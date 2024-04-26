@@ -42,12 +42,16 @@ class RecipeController extends AbstractController
     public function fetchRecipeDetails(#[MapQueryParameter] string $recipeId, BoltManager $bolt, SerializerService $serializer, QueryBuilder $builder): Response
     {
         $query = $builder->returnRecipeDetailsQuery($recipeId);
-
         $boltResponse = $bolt->runQuery($query);
         $nodeArray = $bolt->boltResponseHandler($boltResponse);
 
-        $response = $serializer->arraySerialize($nodeArray[0]);
+        $similarRecipesQuery = $builder->returnSimilarRecipes($recipeId);
+        $boltResponse = $bolt->runQuery($similarRecipesQuery);
+        $similarRecipesArray = $bolt->boltResponseHandler($boltResponse);
 
+        $responseArray = array_merge($nodeArray[0], $similarRecipesArray);
+        $response = $serializer->arraySerialize($responseArray);
+        dump($responseArray);
         return new Response($response, Response::HTTP_OK);
     }
 

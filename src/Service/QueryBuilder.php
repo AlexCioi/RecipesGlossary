@@ -103,6 +103,23 @@ class QueryBuilder
         return $query;
     }
 
+    public function returnSimilarRecipes(string $recipeId): string
+    {
+        $query = '
+            MATCH (r1:Recipe {id: "'.$recipeId.'"})-[:CONTAINS_INGREDIENT]->(i1:Ingredient)
+            WITH r1, collect(i1.name) AS ingredients1
+            MATCH (r2:Recipe)-[:CONTAINS_INGREDIENT]->(i2:Ingredient)
+            WHERE r2.id <> "'.$recipeId.'" AND NOT r2 = r1
+            WITH r1, ingredients1, r2, collect(i2.name) AS ingredients2
+            RETURN r2 AS recipe,
+                   round(toFloat(size(apoc.coll.intersection(ingredients1, ingredients2))) / size(apoc.coll.union(ingredients1, ingredients2)), 4) * 100 AS similarity_percentage
+            ORDER BY similarity_percentage DESC
+            LIMIT 5;
+        ';
+
+        return $query;
+    }
+
     public function returnTopIngredients(): string
     {
         $query = '

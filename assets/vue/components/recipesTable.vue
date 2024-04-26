@@ -205,23 +205,42 @@
                                                             </div>
                                                             <hr>
                                                             <div class="row">
-                                                                <div :class="modalDetailLabel">
+                                                                <div class="col-2">
                                                                     <p class="fw-bold"> Ingredients: </p>
                                                                 </div>
-                                                                <div :class="modalDetailContent">
+                                                                <div class="col-4">
                                                                     <ul>
                                                                         <li
                                                                             class="list-group-item my-1"
                                                                             v-for="ingredient in item.ingredientList"
                                                                             :key="ingredient.id"
                                                                         >
-                                                                            <button type="button"
-                                                                                    class="btn btn-light"
-                                                                                    disabled>
+                                                                            <button
+                                                                                type="button"
+                                                                                class="btn btn-light"
+                                                                                disabled
+                                                                            >
                                                                                 {{ ingredient.name }}
                                                                             </button>
                                                                         </li>
                                                                     </ul>
+                                                                </div>
+                                                                <div class="col-2">
+                                                                    <p class="fw-bold"> Most similar recipes: </p>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <ol class="list-group list-group-numbered">
+                                                                        <li
+                                                                            class="list-group-item d-flex justify-content-between align-items-start"
+                                                                            v-for="recipe in recipeDetails[3]"
+                                                                            :key="recipe[0].properties.id"
+                                                                        >
+                                                                            <div class="ms-2 me-auto">
+                                                                                <div class="fw-bold"> {{ recipe[0].properties.name }} </div>
+                                                                                Similarity: {{ recipe[1] }}%
+                                                                            </div>
+                                                                        </li>
+                                                                    </ol>
                                                                 </div>
                                                             </div>
                                                             <hr>
@@ -368,7 +387,7 @@ export default {
             isBusy: 1,
             isLoadingIngredients: 0,
             currentPage: 1,
-            ingredients: null,
+            ingredients: [],
             items: [],
             numberOfRecipes: 0,
             authorRecipes: [],
@@ -455,7 +474,6 @@ export default {
                 })
                 .then((response) => {
                     this.processDataArray(response.data);
-                    this.toggleBusy();
                 })
                 .catch((error) => {
                     console.log(error);
@@ -465,7 +483,6 @@ export default {
         },
         processDataArray(array) {
             this.items = array.map((node) => {
-                //console.log(node);
                 const {
                     name: recipe, cookingTime, description, preparationTime, skillLevel: skill,
                 } = node[1].properties;
@@ -509,27 +526,20 @@ export default {
                 const { name } = ingredientNode[0].properties;
                 const firstLetter = name.charAt(0).toLowerCase(); // Convert to lowercase
 
-                // Determine the key for the ingredient
                 const key = this.isNormalLetter(firstLetter) ? firstLetter : '@';
 
-                // Check if the key exists in the accumulator
                 if (!acc[key]) {
-                    // If not, initialize an array for the key
                     acc[key] = [];
                 }
 
-                // Push the ingredient object into the array corresponding to the key
                 acc[key].push({ id, name });
 
                 return acc;
             }, {});
 
-            // Sort the ingredients arrays alphabetically outside of the reduce loop
             Object.keys(this.ingredients).forEach((key) => {
                 this.ingredients[key].sort((a, b) => a.name.localeCompare(b.name));
             });
-
-            console.log(this.ingredients);
         },
         isNormalLetter(character) {
             return /^[a-zA-Z]+$/.test(character);
@@ -574,11 +584,21 @@ export default {
                 })
                 .then((response) => {
                     this.recipeDetails = response.data;
+                    this.processRecipeDetailArray(response.data);
                     console.log(this.recipeDetails);
                 })
                 .catch((error) => {
                     console.log(error);
                 });
+        },
+        processRecipeDetailArray(array) {
+            const similarRecipes = [];
+            for (let i = 3; i < 8; i += 1) {
+                similarRecipes.push(array[i]);
+            }
+
+            this.recipeDetails.splice(3, 5);
+            this.recipeDetails.push(similarRecipes);
         },
     },
     mounted() {
