@@ -3,31 +3,77 @@
         <div class="row">
             <div class="col-2">
                 <div class="row">
-                    <img src="../../../public/images/recipe-logo.jpg" alt="">
+                    <img src="../../../public/images/recipe-logo.jpg" alt="" class="ps-0">
                 </div>
-                <div class="row">
-                    <div class="container-fluid d-flex flex-wrap">
-                        <div
-                            class=""
-                            v-for="ingredient in ingredients"
-                            :key="ingredient.id"
+                <div class="d-flex flex-wrap">
+                    <div v-for="ingredient in checkedIngredients"
+                         :key="ingredient"
+                         class="bg-secondary text-white rounded-pill d-flex align-items-center m-1"
+                    >
+                        <div class="my-1 ms-3 me-1">
+                            {{ ingredient }}
+                        </div>
+                        <button type="button"
+                                class="bg-secondary border border-0 px-0 py-0 me-3 text-white"
+                                @click="removeIngredient(ingredient)"
                         >
-                            <input
-                                type="checkbox"
-                                :id=ingredient.id
-                                :value=ingredient.name
-                                v-model="checkedIngredients"
-                                @change="fetchPageData">
-                            <label :for=ingredient.id> {{ ingredient.name }} </label>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="accordion ps-0 mt-3 pt-3" id="ingredientAccordion">
+                        <div class="accordion-item"
+                             v-for="letter in letters"
+                             :key="letter"
+                        >
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        :data-bs-target="'#collapse_' + letter" aria-expanded="true"
+                                        :aria-controls="'collapse_' + letter"
+                                >
+                                    {{ letter }}
+                                </button>
+                            </h2>
+                            <div :id="'collapse_'+ letter" class="accordion-collapse collapse" data-bs-parent="#ingredientAccordion">
+                                <div class="accordion-body">
+                                    <div class="container-fluid">
+                                        <div
+                                            class="row"
+                                            v-for="ingredient in ingredients[letter.toLowerCase()]"
+                                            :key="ingredient.id"
+                                        >
+                                            <div class="col-2">
+                                                <input
+                                                    type="checkbox"
+                                                    :id=ingredient.id
+                                                    :value=ingredient.name
+                                                    v-model="checkedIngredients"
+                                                    @change="fetchPageData"
+                                                >
+                                            </div>
+                                            <div class="col-10">
+                                                <label :for=ingredient.id>
+                                                    {{ ingredient.name }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
             <div class="col-10 p-4 bg-light">
                 <leaderboard-component class="mb-4"/>
                 <div class="shadow p-4 mb-5 bg-body-tertiary rounded">
-                    <div class="input-group mb-2">
+                    <div class="input-group input-group">
                         <span class="input-group-text" id="search">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
@@ -329,6 +375,10 @@ export default {
             recipeDetails: [],
             direction: 0,
             criterion: 0,
+            letters: [
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '@',
+            ],
         };
     },
     methods: {
@@ -376,6 +426,11 @@ export default {
         },
         toggleSkillCriterion() {
             this.criterion = 2;
+        },
+        removeIngredient(ingredient) {
+            this.checkedIngredients = this.checkedIngredients.filter((item) => item !== ingredient);
+
+            this.fetchPageData();
         },
         nameSearchHandle() {
             clearTimeout(this.searchTimeout);
@@ -449,13 +504,35 @@ export default {
                 });
         },
         processIngredientData(array) {
-            this.ingredients = array.map((ingredientNode) => {
+            this.ingredients = array.reduce((acc, ingredientNode) => {
                 const { id } = ingredientNode[0];
-
                 const { name } = ingredientNode[0].properties;
+                const firstLetter = name.charAt(0).toLowerCase(); // Convert to lowercase
 
-                return { id, name };
+                // Determine the key for the ingredient
+                const key = this.isNormalLetter(firstLetter) ? firstLetter : '@';
+
+                // Check if the key exists in the accumulator
+                if (!acc[key]) {
+                    // If not, initialize an array for the key
+                    acc[key] = [];
+                }
+
+                // Push the ingredient object into the array corresponding to the key
+                acc[key].push({ id, name });
+
+                return acc;
+            }, {});
+
+            // Sort the ingredients arrays alphabetically outside of the reduce loop
+            Object.keys(this.ingredients).forEach((key) => {
+                this.ingredients[key].sort((a, b) => a.name.localeCompare(b.name));
             });
+
+            console.log(this.ingredients);
+        },
+        isNormalLetter(character) {
+            return /^[a-zA-Z]+$/.test(character);
         },
         fetchNumberOfPages() {
             axios

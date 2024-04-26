@@ -8,10 +8,18 @@
                 <ol class="list-group list-group-numbered">
                     <li v-for="ingredient in ingredients"
                         :key="ingredient.id"
-                        class="list-group-item d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
-                            <div class="">{{ingredient.name}}</div>
-                        </div>
+                        class="list-group-item d-flex align-items-end"
+                    >
+                        <b-button
+                            v-b-tooltip.hover.right
+                            :title="ingredient.usages + ' usages'"
+                            variant="white outline-white"
+                            diabled
+                            size="md"
+                            class="ms-2 p-0"
+                        >
+                            {{ ingredient.name }}
+                        </b-button>
                     </li>
                 </ol>
             </div>
@@ -22,10 +30,18 @@
                 <ol class="list-group list-group-numbered">
                     <li v-for="author in authors"
                         :key="author.id"
-                        class="list-group-item d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
-                            <div class=""> {{ author.name }} </div>
-                        </div>
+                        class="list-group-item d-flex align-items-end"
+                    >
+                        <b-button
+                            v-b-tooltip.hover.right
+                            :title="author.recipeCount + ' recipes written'"
+                            variant="white outline-white"
+                            diabled
+                            size="md"
+                            class="ms-2 p-0"
+                        >
+                            {{ author.name }}
+                        </b-button>
                     </li>
                 </ol>
             </div>
@@ -37,9 +53,16 @@
                     <li v-for="recipe in recipes"
                         :key="recipe.id"
                         class="list-group-item d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
-                            <div class=""> {{ recipe.name }} </div>
-                        </div>
+                        <b-button
+                            v-b-tooltip.hover.right
+                            :title="recipe.preparationTime + ' minutes'"
+                            variant="white outline-white"
+                            diabled
+                            size="md"
+                            class="ms-2 p-0"
+                        >
+                            {{ recipe.name }}
+                        </b-button>
                     </li>
                 </ol>
             </div>
