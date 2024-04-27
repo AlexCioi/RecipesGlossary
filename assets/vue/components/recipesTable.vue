@@ -42,7 +42,7 @@
                             </h2>
                             <div :id="'collapse_'+ letter" class="accordion-collapse collapse" data-bs-parent="#ingredientAccordion">
                                 <div class="accordion-body">
-                                    <div class="container-fluid">
+                                    <div v-if="!isLoadingIngredients" class="container-fluid">
                                         <div
                                             class="row"
                                             v-for="ingredient in ingredients[letter.toLowerCase()]"
@@ -64,8 +64,13 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <button v-if="isLoadingIngredients" class="btn btn-primary" type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                        <span role="status">Loading ingredients...</span>
+                                    </button>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -229,7 +234,7 @@
                                                                     <p class="fw-bold"> Close matches: </p>
                                                                 </div>
                                                                 <div class="col-4">
-                                                                    <ol class="list-group list-group-numbered">
+                                                                    <ol v-show="!isLoadingRecipeDetails" class="list-group list-group-numbered">
                                                                         <li
                                                                             class="list-group-item d-flex justify-content-between align-items-center"
                                                                             v-for="recipe in recipeDetails[3]"
@@ -241,6 +246,10 @@
                                                                             <span class="badge text-bg-primary rounded-pill">{{ recipe[1] }}%</span>
                                                                         </li>
                                                                     </ol>
+                                                                    <button v-show="isLoadingRecipeDetails" class="btn btn-primary" type="button" disabled>
+                                                                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                                                        <span role="status">Loading...</span>
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                             <hr>
@@ -384,8 +393,8 @@ export default {
             modalDetailContent: 'col-8',
             queryName: null,
             checkedIngredients: [],
-            isBusy: 1,
-            isLoadingIngredients: 0,
+            isLoadingIngredients: false,
+            isLoadingRecipeDetails: false,
             currentPage: 1,
             ingredients: [],
             items: [],
@@ -401,11 +410,11 @@ export default {
         };
     },
     methods: {
-        toggleBusy() {
-            this.isBusy = !this.isBusy;
-        },
         toggleIngredientsLoading() {
             this.isLoadingIngredients = !this.isLoadingIngredients;
+        },
+        toggleRecipeDetailsLoading() {
+            this.isLoadingRecipeDetails = !this.isLoadingRecipeDetails;
         },
         orderByName() {
             if (this.criterion === 0) {
@@ -576,6 +585,7 @@ export default {
         },
         fetchRecipeDetails(id) {
             this.recipeDetails = [];
+            this.toggleRecipeDetailsLoading();
             axios
                 .get('/api/recipe/details', {
                     params: {
@@ -585,7 +595,7 @@ export default {
                 .then((response) => {
                     this.recipeDetails = response.data;
                     this.processRecipeDetailArray(response.data);
-                    console.log(this.recipeDetails);
+                    this.toggleRecipeDetailsLoading();
                 })
                 .catch((error) => {
                     console.log(error);
