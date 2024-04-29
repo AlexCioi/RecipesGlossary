@@ -93,6 +93,12 @@
                                v-on:input="nameSearchHandle"
                         >
                     </div>
+                    <div class="my-2">
+                        <p v-show="!isLoadingRecipesNumber" class="fw-medium">Showing: {{ items.length }} of {{ numberOfRecipes }} results </p>
+                        <div v-show="isLoadingRecipesNumber" class="spinner-border spinner-border-sm mb-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <table class="table table-hover table-bordered" id="table">
                         <thead class="table-light">
                             <tr>
@@ -402,6 +408,7 @@ export default {
             isLoadingIngredients: false,
             isLoadingRecipeDetails: false,
             isLoadingAuthorRecipes: false,
+            isLoadingRecipesNumber: false,
             currentPage: 1,
             ingredients: [],
             items: [],
@@ -426,7 +433,10 @@ export default {
         toggleAuthorRecipesLoading() {
             this.isLoadingAuthorRecipes = !this.isLoadingAuthorRecipes;
         },
-        orderByName() {
+        toggleRecipesNumberLoading() {
+            this.isLoadingRecipesNumber = !this.isLoadingRecipesNumber;
+        },
+         orderByName() {
             if (this.criterion === 0) {
                 this.switchDirection();
             } else {
@@ -564,6 +574,7 @@ export default {
             return /^[a-zA-Z]+$/.test(character);
         },
         fetchNumberOfPages() {
+            this.toggleRecipesNumberLoading();
             axios
                 .get('/api/pagination', {
                     params: {
@@ -573,6 +584,7 @@ export default {
                 })
                 .then((response) => {
                     this.numberOfRecipes = response.data.numberOfRecipes;
+                    this.toggleRecipesNumberLoading();
                 })
                 .catch((error) => {
                     console.log(error);
