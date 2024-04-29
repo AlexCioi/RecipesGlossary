@@ -10,7 +10,7 @@ app_homepage:
 
 api_recipes:
     path: /api/recipes
-    controller: App\Controller\RecipeController::fetchAllRecipes
+    controller: App\Controller\RecipeController::fetchPageRecipes
 
 api_ingredients:
     path: /api/ingredients

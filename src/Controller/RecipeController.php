@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 
 class RecipeController extends AbstractController
 {
-    public function fetchAllRecipes(
+    public function fetchPageRecipes(
         #[MapQueryParameter] int $pageNumber, #[MapQueryParameter] ?string $name, #[MapQueryParameter] ?array $ingredients,
         #[MapQueryParameter] string $direction, #[MapQueryParameter] string $criterion,
         BoltManager $bolt, SerializerService $serializerService, QueryBuilder $builder): Response

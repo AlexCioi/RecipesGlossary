@@ -8,7 +8,7 @@
                 <ol v-if="!isLoadingIngredients" class="list-group list-group-numbered">
                     <li v-for="ingredient in ingredients"
                         :key="ingredient.id"
-                        class="list-group-item d-flex align-items-end"
+                        class="list-group-item list-group-item-action d-flex align-items-end"
                     >
                         <b-button
                             v-b-tooltip.hover.right
@@ -34,7 +34,7 @@
                 <ol v-if="!isLoadingAuthors" class="list-group list-group-numbered">
                     <li v-for="author in authors"
                         :key="author.id"
-                        class="list-group-item d-flex align-items-end"
+                        class="list-group-item list-group-item-action d-flex align-items-end"
                     >
                         <b-button
                             v-b-tooltip.hover.right
@@ -60,7 +60,7 @@
                 <ol v-if="!isLoadingRecipes" class="list-group list-group-numbered">
                     <li v-for="recipe in recipes"
                         :key="recipe.id"
-                        class="list-group-item d-flex align-items-end">
+                        class="list-group-item list-group-item-action d-flex align-items-end">
                         <b-button
                             v-b-tooltip.hover.right
                             :title="recipe.preparationTime + ' minutes'"

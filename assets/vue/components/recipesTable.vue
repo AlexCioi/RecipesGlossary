@@ -78,7 +78,7 @@
             <div class="col-10 p-4 bg-light">
                 <leaderboard-component class="mb-4"/>
                 <div class="shadow p-4 mb-5 bg-body-tertiary rounded">
-                    <div class="input-group input-group">
+                    <div class="input-group input-group mb-4">
                         <span class="input-group-text" id="search">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
@@ -161,10 +161,12 @@
                                     @click="fetchRecipeDetails(item.recipeId)"
                                 >
                                     <div class="my-2 ms-2">
-                                        {{ item.recipe }}
+                                        <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                                            {{ item.recipe }}
+                                        </a>
                                     </div>
                                     <div class="modal fade" :id="'modal-'+item.recipeId" data-bs-target="static" data-bs-keyboard="false" tabindex="-1" :aria-labelledby="'staticBackdropLabel'+item.recipeId" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
+                                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h1 class="modal-title fs-5" :id="'staticBackdropLabel'+item.recipeId"> {{ item.recipe }} </h1>
@@ -324,14 +326,14 @@
                                         {{ item.authorName }}
                                     </div>
                                     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
+                                        <div class="modal-dialog modal-dialog-scrollable">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ item.authorName }}</h1>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <ul>
+                                                    <ul v-if="!isLoadingAuthorRecipes">
                                                         <li v-for="recipe in authorRecipes"
                                                             :key="recipe"
                                                             class="my-2"
@@ -339,6 +341,10 @@
                                                             {{recipe}}
                                                         </li>
                                                     </ul>
+                                                    <button v-if="isLoadingAuthorRecipes" class="btn btn-primary" type="button" disabled>
+                                                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                                        <span role="status">Loading {{ item.authorName }}'s recipes </span>
+                                                    </button>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -395,6 +401,7 @@ export default {
             checkedIngredients: [],
             isLoadingIngredients: false,
             isLoadingRecipeDetails: false,
+            isLoadingAuthorRecipes: false,
             currentPage: 1,
             ingredients: [],
             items: [],
@@ -415,6 +422,9 @@ export default {
         },
         toggleRecipeDetailsLoading() {
             this.isLoadingRecipeDetails = !this.isLoadingRecipeDetails;
+        },
+        toggleAuthorRecipesLoading() {
+            this.isLoadingAuthorRecipes = !this.isLoadingAuthorRecipes;
         },
         orderByName() {
             if (this.criterion === 0) {
@@ -569,6 +579,7 @@ export default {
                 });
         },
         fetchAuthorRecipes(name) {
+            this.toggleAuthorRecipesLoading();
             this.authorRecipes = [];
             axios
                 .get('/api/author/recipes', {
@@ -578,6 +589,7 @@ export default {
                 })
                 .then((response) => {
                     this.authorRecipes = response.data;
+                    this.toggleAuthorRecipesLoading();
                 })
                 .catch((error) => {
                     console.log(error);
